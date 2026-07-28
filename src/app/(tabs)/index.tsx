@@ -2,6 +2,8 @@ import { View, Text } from "react-native";
 
 import { StyleSheet } from "react-native";
 
+import { Listing } from "../../components/Listing";
+
 const pageStyle = StyleSheet.create({
     mainPage:{
         flex: 1,
@@ -14,7 +16,7 @@ const pageStyle = StyleSheet.create({
 export default function IndexScreen(){
     return (
         <View style={pageStyle.mainPage}>
-            <Text style={{color:'white'} }>Index</Text>
+            <Listing onPress={() => {}} />
         </View>
     );
 }
