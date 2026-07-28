@@ -27,6 +27,7 @@ const TabStyle = StyleSheet.create({
 export default function Layout(){
     const [fontsLoaded] = useFonts({
         'HelveticaNeue-Light': require('../assets/fonts/HelveticaNeue-Light.otf'),
+        'HelveticaNeue-Bold': require('../assets/fonts/HelveticaNeue-Bold.otf'),
     });
     return(
         
