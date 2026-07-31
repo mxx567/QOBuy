@@ -14,11 +14,11 @@ const pageStyle = StyleSheet.create({
 });
 
 export default function ProfileScreen(){
-    const { claims } = useAuthContext();
+    const { profile } = useAuthContext();
 
     return (
         <View style={pageStyle.mainPage}>
-            <Text style={{color:'white'}}>{"Hello" + claims?.username}</Text>
+            <Text style={{color:'white'}}>{"Hello, " + profile?.username + "! :thumps_up:"}</Text>
             <SignOutButton />
         </View>
     );

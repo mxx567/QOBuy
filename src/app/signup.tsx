@@ -43,8 +43,8 @@ export default function SignUpScreen(){
             password: ipassword,
             options: {
                 data: {
-                username: iusername,
-                full_name: iusername
+                    username: iusername,
+                    full_name: iusername
                 }
             }
         });
@@ -52,7 +52,6 @@ export default function SignUpScreen(){
         if (!error && data.user) {
             await supabase.from('profiles').upsert({
                 id: data.user.id,
-                email: data.user.email,
                 username: iusername,
                 full_name: iusername,
             });
