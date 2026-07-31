@@ -1,6 +1,6 @@
 import { View, Text, ScrollView } from "react-native";
 import { StyleSheet } from "react-native";
-import { ListingCard } from "../../components/ListingCard";
+import { ListingCard } from "../../../components/common/ListingCard";
 import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase";
 

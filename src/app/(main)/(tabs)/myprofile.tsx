@@ -1,3 +1,4 @@
+import SignOutButton from "@/src/components/auth/SignOut";
 import { View, Text } from "react-native";
 
 import { StyleSheet } from "react-native";
@@ -15,6 +16,7 @@ export default function ProfileScreen(){
     return (
         <View style={pageStyle.mainPage}>
             <Text style={{color:'white'}}>Profile</Text>
+            <SignOutButton />
         </View>
     );
 }
