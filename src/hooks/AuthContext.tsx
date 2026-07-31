@@ -11,7 +11,7 @@ export const AuthContext = createContext<AuthData>({
   claims: undefined,
   profile: undefined,
   isLoading: true,
-  isLoggedIn: false,
+  isLoggedIn: false
 })
 
 export const useAuthContext = () => useContext(AuthContext)

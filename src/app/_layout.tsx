@@ -4,7 +4,7 @@ import { useFonts } from 'expo-font';
 import AuthProvider from '../providers/AuthProvider';
 import { Stack } from 'expo-router';
 import { useAuthContext } from '../hooks/AuthContext';
-
+import { useState } from 'react';
 
 
 
@@ -17,8 +17,8 @@ function RootNavigator(){
             </Stack.Protected>
             <Stack.Protected guard={!isLoggedIn}>
                 <Stack.Screen name="login" options={{ headerShown: false }} />
+                <Stack.Screen name="signup" options={{ headerShown: false }} />  
             </Stack.Protected>
-        
         </Stack>
     )
 }

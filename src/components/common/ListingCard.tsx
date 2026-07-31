@@ -54,7 +54,7 @@ const ListingStyle = StyleSheet.create({
 
 
 
-const ListingCard = ({image = require('../assets/images/default/notfound.png'), name ='UNKNOWN' ,isLiked = false , category = 'Unknown',publishDate = 'Jan 01, 1970 at 10:00', price = 'Null', onPress} : ListingProps) => {
+const ListingCard = ({image = require('../../assets/images/default/notfound.png'), name ='UNKNOWN' ,isLiked = false , category = 'Unknown',publishDate = 'Jan 01, 1970 at 10:00', price = 'Null', onPress} : ListingProps) => {
     const [liked, setLiked] = useState(isLiked);
     return (
         <Pressable style={ListingStyle.listingContainer} onPress={onPress}>
