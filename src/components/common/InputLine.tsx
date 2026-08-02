@@ -1,19 +1,32 @@
-import { View, TextInput, StyleSheet  } from "react-native";
+import { View, TextInput, StyleSheet, InputModeOptions  } from "react-native";
 
-const inputLineStyle = StyleSheet.create({
+
+
+interface InputLineProps {
+    value: string,
+    onChangeText: (text: string) => void,
+    placeholder?: string, 
+    placeholderTextColor?: string, 
+    secureTextEntry?: boolean, 
+    inputMode?: InputModeOptions,
+    height?: number
+}
+
+export default function InputLine({value, onChangeText, placeholder, placeholderTextColor = "#000000" , secureTextEntry, inputMode = "text", height = 40}: InputLineProps) {
+    const inputLineStyle = StyleSheet.create({
     input: {
         backgroundColor: '#00000000',
         color: 'white',
         borderWidth: 2,
         borderColor: '#555',
-        width: 300,
-        height: 40,
-        borderRadius: 100,
+        width: 340,
+        height: height,
+        borderRadius: 20,
         padding: 10,
+        textAlign: 'left',
+        textAlignVertical: 'top',
     }
 });
-
-export default function InputLine({value, onChangeText, placeholder, placeholderTextColor = "#000000" , secureTextEntry}: { value: string, onChangeText: (text: string) => void, placeholder?: string, placeholderTextColor?: string, secureTextEntry?: boolean}) {
     return (
         <View>
             <TextInput
@@ -23,6 +36,7 @@ export default function InputLine({value, onChangeText, placeholder, placeholder
                 placeholder={placeholder}
                 placeholderTextColor={placeholderTextColor}
                 secureTextEntry={secureTextEntry}
+                inputMode={inputMode}
             />
         </View>
     );

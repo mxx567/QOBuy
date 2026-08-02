@@ -4,6 +4,7 @@ interface TabBarButtonDesc {
     text: string;
     image: ImageSourcePropType;
     isFocused?: boolean;
+    onPress?: () => void;
 }
 
 const TabBarButtonStyle = StyleSheet.create({
@@ -39,9 +40,9 @@ const TabBarButtonStyle = StyleSheet.create({
 })
 
 
-const TabBarButton = ({text, image, isFocused, ...props}: TabBarButtonDesc) =>{
+const TabBarButton = ({text, image, isFocused, onPress, ...props}: TabBarButtonDesc) =>{
     return(
-    <Pressable {...props} style={isFocused ? TabBarButtonStyle.buttonPressed : TabBarButtonStyle.button}>
+    <Pressable {...props} style={isFocused ? TabBarButtonStyle.buttonPressed : TabBarButtonStyle.button} onPress={onPress}>
         <Image source={image} style = {TabBarButtonStyle.image}/>
         <Text style = {TabBarButtonStyle.text}>{text}</Text>
     </Pressable>)

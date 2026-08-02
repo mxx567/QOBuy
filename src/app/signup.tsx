@@ -4,6 +4,7 @@ import InputLine from '../components/common/InputLine';
 import CommonButton from '../components/common/CommonButton';
 import CommonErrorText from '../components/common/CommonErrorText';
 import { supabase } from '@/utils/supabase';
+import CommonHeader from '../components/common/CommonHeader';
 const loginStyle = StyleSheet.create({
     mainContainer:{
         flex:1,
@@ -64,6 +65,7 @@ export default function SignUpScreen(){
     return(
         
         <View style = {loginStyle.mainContainer}>
+            <CommonHeader headerText="Sign Up" />
             <Text style = {loginStyle.text}>Sign up</Text>
             <InputLine placeholder="Email" value={iemail} onChangeText={setIEmail} placeholderTextColor="#555" />
             <InputLine placeholder="Username" value={iusername} onChangeText={setIUsername} placeholderTextColor="#555" />

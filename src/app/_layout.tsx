@@ -1,19 +1,17 @@
-
-
-import { useFonts } from 'expo-font';
 import AuthProvider from '../providers/AuthProvider';
 import { Stack } from 'expo-router';
 import { useAuthContext } from '../hooks/AuthContext';
-import { useState } from 'react';
 
 
 
 function RootNavigator(){
     const { isLoggedIn } = useAuthContext()
     return(
-        <Stack>
+        <Stack >
             <Stack.Protected guard={isLoggedIn}>
                 <Stack.Screen name="(main)" options={{headerShown: false}} />
+                <Stack.Screen name="add" options={{ headerShown: false }} />
+                <Stack.Screen name="categories" options={{ headerShown: false }} />
             </Stack.Protected>
             <Stack.Protected guard={!isLoggedIn}>
                 <Stack.Screen name="login" options={{ headerShown: false }} />
