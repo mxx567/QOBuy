@@ -2,9 +2,9 @@ import { useRouter } from "expo-router";
 import CommonHeader from "@/src/components/common/CommonHeader";
 import CommonButton from "@/src/components/common/CommonButton";
 import InputLine from "@/src/components/common/InputLine";
-import { View, StatusBar } from "react-native";
+import { View, StatusBar, Alert, Image, Pressable } from "react-native";
 
-import { StyleSheet } from "react-native";
+import { StyleSheet, ScrollView } from "react-native";
 import { useEffect, useState } from "react";
 import { useListingCreationContext } from "@/src/hooks/ListingCreationContext";
 
@@ -15,6 +15,8 @@ import { useAuthContext } from "@/src/hooks/AuthContext";
 
 import InputCounter from "@/src/components/common/InputCounter";
 import OptionButton from "@/src/components/common/OptionButton";
+import { ImagePickerSmall } from "@/src/components/img/imagePicker";
+import * as expoImagePicker from 'expo-image-picker'
 
 const pageStyle = StyleSheet.create({
     mainPage:{
@@ -28,6 +30,16 @@ const pageStyle = StyleSheet.create({
         justifyContent: "center",
         gap: 10,
         marginTop: 20
+    },
+    imgagesContainer:{
+        flexDirection:'row',
+        gap:5,
+        padding:10
+    },
+    image:{
+        height:100,
+        width:100,
+        borderRadius: 12
     }
 });
 
@@ -66,16 +78,56 @@ export default function AddScreen(){
     },[title, description]);
 
 
+    const [image, setImage] = useState<expoImagePicker.ImagePickerAsset[]>([]);
+
+    const pickImage = async () => {
+        // No permissions request is necessary for launching the image library.
+        // Manually request permissions for videos on iOS when `allowsEditing` is set to `false`
+        // and `videoExportPreset` is `'Passthrough'` (the default), ideally before launching the picker
+        // so the app users aren't surprised by a system dialog after picking a video.
+        // See "Invoke permissions for videos" sub section for more details.
+        const permissionResult = await expoImagePicker.requestMediaLibraryPermissionsAsync();
+
+        if (!permissionResult.granted) {
+            Alert.alert('Permission required', 'Permission to access the media library is required.');
+            return;
+        }
+
+        let result = await expoImagePicker.launchImageLibraryAsync({
+            mediaTypes: ['images', 'videos'],
+            aspect: [1, 1],
+            quality: 1,
+            allowsMultipleSelection:true,
+            selectionLimit: 20
+        });
+
+        console.log(result.assets?.length);
+
+        if (!result.canceled && image) {
+            setImage(image.concat(...result.assets));
+        }
+        console.log(image?.length);
+    };
+
 
     return (
         <View style={pageStyle.mainPage}>
             <StatusBar />
+            
             <CommonHeader headerText="Create Listing"/>
-            <View style={pageStyle.screenContainer}>
+            
+            <ScrollView contentContainerStyle={pageStyle.screenContainer}>
+                <ScrollView contentContainerStyle={pageStyle.imgagesContainer} horizontal>
+                    {image && image.map((img) =>(
+                        <Pressable onPress={() => setImage([...image.slice(0, image.indexOf(img)), ...image.slice(image.indexOf(img) + 1)])}>
+                            <Image source={{uri: img.uri}} style={pageStyle.image} key = {img.uri}/>
+                        </Pressable>
+                    ))}
+                    {image && <ImagePickerSmall onPress= {() => pickImage()}/>}
+                </ScrollView>
                 <InputLine placeholder="Title" value={title} onChangeText={setTitle} placeholderTextColor="#555" />
                 <InputCounter title="Title should contain minimum of 16 symbols " currentSymbolC={titlec} maxSymbolC={64}/>
-
-
+                
                 <OptionButton title={selectedSubCategoryId ? selectedCategory + ", " + subCategory[selectedCategory.toLowerCase()].find(subCat => subCat.id == selectedSubCategoryId)?.name : "Select Category" } isNext onPress={() => router.push('/categories')} />
                 <InputLine placeholder="Description" value={description} onChangeText={setDescription} placeholderTextColor="#555" height={200} />
                 <InputCounter title="Description should contain minimum of 64 symbols" currentSymbolC={descc} maxSymbolC={4096}/>
@@ -84,7 +136,7 @@ export default function AddScreen(){
                 
                 <OptionButton title={selectedRegion.regId? selectedRegion.full_path : "Select a region"} isNext onPress={()=>{router.push("/regions")}}/>
                 <CommonButton title="Publish" isNext={false} onPress= {()=> {addListing();}}/>
-            </View>
+            </ScrollView>
         </View>
     );
 }
