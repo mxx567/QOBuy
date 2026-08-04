@@ -1,22 +1,20 @@
-import CommonButton from "@/src/components/common/CommonButton";
+import OptionButton from "@/src/components/common/OptionButton";
 import CommonHeader from "@/src/components/common/CommonHeader";
 import { useRouter } from "expo-router";
-import { View, Text, Pressable, StyleSheet, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView } from "react-native";
+
+
 
 type Category ={
     id: number;
     icon?: string;
     name: string;
 }
-
-
 const pageStyle = StyleSheet.create({
     mainContainer:{
         flex:1,
         backgroundColor: '#1B1818',
         alignItems: "center",
-        justifyContent: "center",
-        gap: 5
     },
     text:{
         color: 'white',
@@ -80,7 +78,7 @@ export default function CategoriesScreen() {
 
         <ScrollView contentContainerStyle={pageStyle.mainContainer}>
             {categories.map((category) => (
-                <CommonButton key={category.id} title={category.name} isNext onPress={() => router.push({
+                <OptionButton key={category.id} title={category.name} isNext onPress={() => router.push({
                     pathname: '/categories/[category]',
                     params: { category: category.name }
                 })} />

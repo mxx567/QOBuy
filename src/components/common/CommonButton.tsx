@@ -23,7 +23,8 @@ const CommonButtonStyle = StyleSheet.create({
     },
     text: {
         color: 'white',
-        fontSize: 20
+        fontSize: 20,
+        maxWidth:270,
     },
     image: {
         width: 20,

@@ -1,6 +1,6 @@
 import { useLocalSearchParams, usePathname, useRouter } from "expo-router";
 import { subCategory } from "@/src/data/subCategory";
-import CommonButton from "@/src/components/common/CommonButton";
+import OptionButton from "@/src/components/common/OptionButton";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import CommonHeader from "@/src/components/common/CommonHeader";
 
@@ -13,8 +13,6 @@ const pageStyle = StyleSheet.create({
         flex:1,
         backgroundColor: '#1B1818',
         alignItems: "center",
-        justifyContent: "center",
-        gap: 5
     },
     text:{
         color: 'white',
@@ -27,16 +25,14 @@ export default function category() {
     const params = useLocalSearchParams<{ category: string }>();
 
     const { selectedCategory, setSelectedCategory, selectedSubCategoryId, setSelectedSubCategoryId} = useListingCreationContext();
-    useEffect(() => {
-        console.log(selectedCategory);
-    }, [selectedCategory]);
+   
     return (
         <View style={pageStyle.mainContainer}>
             <CommonHeader headerText={params.category} />
 
             <ScrollView contentContainerStyle={pageStyle.mainContainer}>
                 {subCategory[params.category.toLowerCase()]?.map((subCat) => (
-                    <CommonButton
+                    <OptionButton
                         key={subCat.id}
                         title={subCat.name}
                         isNext
