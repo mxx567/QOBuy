@@ -60,7 +60,7 @@ export default function AddScreen(){
     return (
         <View style={pageStyle.mainPage}>
             <StatusBar />
-            <CommonHeader headerText="Create Listing" />
+            <CommonHeader headerText="Create Listing"/>
             <View style={pageStyle.screenContainer}>
                 <InputLine placeholder="Title" value={title} onChangeText={setTitle} placeholderTextColor="#555" />
                 <CommonButton title={selectedSubCategoryId ? selectedCategory + ", " + subCategory[selectedCategory.toLowerCase()].find(subCat => subCat.id == selectedSubCategoryId)?.name : "Select Category" } isNext onPress={() => router.push('/categories')} />

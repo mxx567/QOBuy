@@ -3,8 +3,8 @@ import { StyleSheet } from "react-native";
 import { ListingCard } from "../../../components/common/ListingCard";
 import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase";
-import { subCategory } from "@/src/data/subCategory";
-
+import { subCategory, findSubCategoryById } from "@/src/data/subCategory";
+import date2string from "@/utils/date2string";
 
 const pageStyle = StyleSheet.create({
     mainPage:{
@@ -20,6 +20,7 @@ export default function IndexScreen(){
     const [listings, setListings] = useState<any[]>([]);
 
     useEffect(() => {
+        
         const getListings = async () => {
             try {
                 const { data: listings, error } = await supabase.from('Listings').select();
@@ -43,13 +44,13 @@ export default function IndexScreen(){
         <ScrollView style={pageStyle.mainPage}>
             {listings.map((listing: any) => (
                 <ListingCard 
-                    onPress={() => console.log(listing.created_at)}
+                    onPress={() => {}}
                     key={listing.id} 
                     name={listing.name.toString()}
                     price={listing.price.toString()}
                     isLiked={false}
-                    category={listing.category.toString()}
-                    publishDate={listing.publishDate}
+                    category={findSubCategoryById(listing.category)?.name}
+                    publishDate={date2string(listing.created_at)}
                 />
             ))}
         </ScrollView>

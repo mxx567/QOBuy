@@ -15,17 +15,16 @@ interface ListingProps {
 
 const ListingStyle = StyleSheet.create({
     listingContainer:{
-
         flexDirection : 'row',
         height: 200,
         backgroundColor: '#242424',
         alignItems: 'center',
-        justifyContent: 'center',
         gap: 10
     },
     listingImage:{
         width: 150,
         height: 150,
+        marginLeft:20,
         borderRadius: 10,
     },
     title:{
@@ -47,9 +46,12 @@ const ListingStyle = StyleSheet.create({
         gap: 10,
     },
     bottomContainer:{
-        flexDirection: 'row',
+        flexDirection: "row",
         gap: 10,       
     },
+    catdate:{
+        minWidth:120,
+    }
 });
 
 
@@ -64,7 +66,7 @@ const ListingCard = ({image = require('../../assets/images/default/notfound.png'
                 <Text style = {ListingStyle.title}>{name}</Text>
                 <Text style = {ListingStyle.price}>{price}</Text>
                 <View style = {ListingStyle.bottomContainer}>
-                    <View>
+                    <View style ={ListingStyle.catdate}>
                         <Text style = {ListingStyle.smallText}>{category}</Text>
                         <Text style = {ListingStyle.smallText}>{publishDate}</Text>
                     </View>

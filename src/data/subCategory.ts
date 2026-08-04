@@ -127,3 +127,9 @@ export const subCategory: Record<string, SubCategoryType[]> = {
         { name: "Health, Other", id: 1109 },
     ],
 };
+
+export const findSubCategoryById = (id: number): SubCategoryType | undefined => {
+  return Object.values(subCategory)
+    .flat()
+    .find(item => item.id === id);
+};

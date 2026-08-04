@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, StatusBar } from 'react-native'
 import { useState } from 'react'
 import InputLine from '../components/common/InputLine';
 import CommonButton from '../components/common/CommonButton';
@@ -9,6 +9,9 @@ const loginStyle = StyleSheet.create({
     mainContainer:{
         flex:1,
         backgroundColor: '#1B1818',
+    },
+    inputContainer:{
+        marginTop:100,
         alignItems: "center",
         justifyContent: "center",
         gap: 5
@@ -63,16 +66,19 @@ export default function SignUpScreen(){
     }
 
     return(
-        
         <View style = {loginStyle.mainContainer}>
+            <StatusBar/>
             <CommonHeader headerText="Sign Up" />
-            <Text style = {loginStyle.text}>Sign up</Text>
-            <InputLine placeholder="Email" value={iemail} onChangeText={setIEmail} placeholderTextColor="#555" />
-            <InputLine placeholder="Username" value={iusername} onChangeText={setIUsername} placeholderTextColor="#555" />
-            <InputLine placeholder="Password" secureTextEntry value={ipassword} onChangeText={setIPassword} placeholderTextColor="#555" />
-            <InputLine placeholder="Confirm Password" secureTextEntry value={icpassword} onChangeText={setIcPassword} placeholderTextColor="#555" />
-            <CommonErrorText value = {message}/>
-            <CommonButton title="Next" onPress={() => signUp()} />
+            <View style = {loginStyle.inputContainer}>
+                <Text style = {loginStyle.text}>Sign up</Text>
+                <InputLine placeholder="Email" value={iemail} onChangeText={setIEmail} placeholderTextColor="#555" />
+                <InputLine placeholder="Username" value={iusername} onChangeText={setIUsername} placeholderTextColor="#555" />
+                <InputLine placeholder="Password" secureTextEntry value={ipassword} onChangeText={setIPassword} placeholderTextColor="#555" />
+                <InputLine placeholder="Confirm Password" secureTextEntry value={icpassword} onChangeText={setIcPassword} placeholderTextColor="#555" />
+                <CommonErrorText value = {message}/>
+                <CommonButton title="Next" onPress={() => signUp()} />
+            </View>
         </View>
+        
     )
 }
