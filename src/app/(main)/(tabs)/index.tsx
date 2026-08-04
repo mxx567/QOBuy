@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 import { ListingCard } from "../../../components/common/ListingCard";
 import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase";
-
+import { subCategory } from "@/src/data/subCategory";
 
 
 const pageStyle = StyleSheet.create({
@@ -13,6 +13,8 @@ const pageStyle = StyleSheet.create({
         marginTop: 50,
     }
 });
+
+
 
 export default function IndexScreen(){
     const [listings, setListings] = useState<any[]>([]);
@@ -41,7 +43,7 @@ export default function IndexScreen(){
         <ScrollView style={pageStyle.mainPage}>
             {listings.map((listing: any) => (
                 <ListingCard 
-                    onPress={() => console.log(`Pressed ${listing.name}`)}
+                    onPress={() => console.log(listing.created_at)}
                     key={listing.id} 
                     name={listing.name.toString()}
                     price={listing.price.toString()}

@@ -5,7 +5,7 @@ export const ListingCreationContext = createContext<{
   selectedSubCategoryId: number;
   setSelectedCategory: (name: string) => void;
   setSelectedSubCategoryId: (id: number) => void;
-}>({ selectedCategoryId: 0, setSelectedCategoryId: () => {} });
+}>({ selectedCategory: "", setSelectedCategory: () => {}, selectedSubCategoryId: 0, setSelectedSubCategoryId: ()=>{}});
 
 export const ListingCreationProvider = ({ children }: PropsWithChildren) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('');
