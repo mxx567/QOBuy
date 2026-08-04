@@ -5,6 +5,10 @@ import InputLine from "@/src/components/common/InputLine";
 import { View, Text, StatusBar } from "react-native";
 
 import { StyleSheet } from "react-native";
+import { useState } from "react";
+import { useListingCreationContext } from "@/src/hooks/ListingCreationContext";
+
+import { subCategory } from "@/src/data/subCategory";
 
 const pageStyle = StyleSheet.create({
     mainPage:{
@@ -24,15 +28,23 @@ const pageStyle = StyleSheet.create({
 
 export default function AddScreen(){
     const router = useRouter();
+
+    const [title, setTitle] = useState<string>('');
+    const [description, setDescription] = useState<string>('');
+    const { selectedCategory, selectedSubCategoryId } = useListingCreationContext();
+    const [price, setPrice] = useState<number>(0);
+
+
+    
     return (
         <View style={pageStyle.mainPage}>
             <StatusBar />
             <CommonHeader headerText="Create Listing" />
             <View style={pageStyle.screenContainer}>
-                <InputLine placeholder="Title" value={""} onChangeText={() => {}} placeholderTextColor="#555" />
-                <CommonButton title="Select Category" isNext onPress={() => router.push({pathname: '/categories'})} />
-                <InputLine placeholder="Description" value={""} onChangeText={() => {}} placeholderTextColor="#555" height={200} />
-                <InputLine placeholder="Price" value={""} onChangeText={() => {}} placeholderTextColor="#555" inputMode="numeric" />
+                <InputLine placeholder="Title" value={title} onChangeText={setTitle} placeholderTextColor="#555" />
+                <CommonButton title={selectedSubCategoryId ? selectedCategory + ", " + subCategory[selectedCategory.toLowerCase()].find(subCat => subCat.id == selectedSubCategoryId)?.name : "Select Category" } isNext onPress={() => router.push('/categories')} />
+                <InputLine placeholder="Description" value={description} onChangeText={setDescription} placeholderTextColor="#555" height={200} />
+                <InputLine placeholder="Price" value={price.toString()} onChangeText={(text) => setPrice(Number(text))} placeholderTextColor="#555" inputMode="numeric" />
             </View>
         </View>
     );

@@ -32,7 +32,7 @@ export default function Layout() {
                 <TabTrigger name="home" href={"/"} asChild>
                     <TabBarButton text="Home" image={require('../../assets/icons/home.png')} />
                 </TabTrigger>
-                <TabBarButton text="Add" image={require('../../assets/icons/add.png')} onPress={() => {router.push('/add')}} />
+                <TabBarButton text="Add" image={require('../../assets/icons/add.png')} onPress={() => {router.push({pathname: '/add', params: {selectedSubCategory: ''}})}} />
                 <TabTrigger name="article" href="/myprofile" asChild>
                     <TabBarButton text="My Profile" image={require('../../assets/icons/user.png')} />
                 </TabTrigger>

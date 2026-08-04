@@ -1,6 +1,7 @@
 import CommonButton from "@/src/components/common/CommonButton";
+import CommonHeader from "@/src/components/common/CommonHeader";
 import { useRouter } from "expo-router";
-import { View, Text, Pressable, StyleSheet } from "react-native";
+import { View, Text, Pressable, StyleSheet, ScrollView } from "react-native";
 
 type Category ={
     id: number;
@@ -75,14 +76,16 @@ export default function CategoriesScreen() {
 
   return (
     <View style={pageStyle.mainContainer}>
-      <Text style={pageStyle.text}>Categories</Text>
+        <CommonHeader headerText="Categories" />
 
-      {categories.map((category) => (
-        <CommonButton title={category.name} isNext onPress={() => router.push({
-            pathname: '/categories/[category]',
-            params: { category: category.name }
-        })} />
-      ))}
+        <ScrollView contentContainerStyle={pageStyle.mainContainer}>
+            {categories.map((category) => (
+                <CommonButton key={category.id} title={category.name} isNext onPress={() => router.push({
+                    pathname: '/categories/[category]',
+                    params: { category: category.name }
+                })} />
+            ))}
+        </ScrollView>
     </View>
   );
 }
