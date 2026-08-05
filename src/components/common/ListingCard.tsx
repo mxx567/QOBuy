@@ -3,7 +3,7 @@ import { LikeButton } from "./LikeButton";
 import { useState } from "react";
 
 interface ListingProps {
-    image?: ImageSourcePropType,
+    image?: string,
     name?: string,
     isLiked?: boolean,
     category?: string,
@@ -56,11 +56,14 @@ const ListingStyle = StyleSheet.create({
 
 
 
-const ListingCard = ({image = require('../../assets/images/default/notfound.png'), name ='UNKNOWN' ,isLiked = false , category = 'Unknown',publishDate = 'Jan 01, 1970 at 10:00', price = 'Null', onPress} : ListingProps) => {
+const ListingCard = ({image, name ='UNKNOWN' ,isLiked = false , category = 'Unknown',publishDate = 'Jan 01, 1970 at 10:00', price = 'Null', onPress} : ListingProps) => {
+    if(image === undefined){
+        image = 'https://i.ibb.co.com/9mGCjPYY/notfound.png';
+    }
     const [liked, setLiked] = useState(isLiked);
     return (
         <Pressable style={ListingStyle.listingContainer} onPress={onPress}>
-            <Image source = {image} style={ListingStyle.listingImage}/>
+            <Image source = {{uri: image}} style={ListingStyle.listingImage}/>
 
             <View style = {ListingStyle.rightContainer}>
                 <Text style = {ListingStyle.title}>{name}</Text>

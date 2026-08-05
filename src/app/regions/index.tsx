@@ -53,7 +53,7 @@ export default function RegionsScreen() {
         <ScrollView>
             {
                 regions.map((region : any)=>(
-                    <OptionButton key = {region.id} title={region.name_en} onPress={()=>{router.push({pathname: '/regions/[region]', params: region.id})}} isNext/>
+                    <OptionButton key = {region.id} title={region.name_en} onPress={()=>{router.push({pathname: '/regions/[region]', params: { regionid:  region.id }})}} isNext/>
                 ))
             }
         </ScrollView>

@@ -3,7 +3,6 @@ import CommonHeader from "@/src/components/common/CommonHeader";
 import CommonButton from "@/src/components/common/CommonButton";
 import InputLine from "@/src/components/common/InputLine";
 import { View, StatusBar, Alert, Image, Pressable } from "react-native";
-
 import { StyleSheet, ScrollView } from "react-native";
 import { useEffect, useState } from "react";
 import { useListingCreationContext } from "@/src/hooks/ListingCreationContext";
@@ -17,6 +16,7 @@ import InputCounter from "@/src/components/common/InputCounter";
 import OptionButton from "@/src/components/common/OptionButton";
 import { ImagePickerSmall } from "@/src/components/img/imagePicker";
 import * as expoImagePicker from 'expo-image-picker'
+import { uploadToImgBB } from "@/utils/imgbb";
 
 const pageStyle = StyleSheet.create({
     mainPage:{
@@ -52,16 +52,19 @@ export default function AddScreen(){
     const { selectedCategory, selectedSubCategoryId, selectedRegion } = useListingCreationContext();
     const [price, setPrice] = useState<number>(0);
 
-
     const [titlec, setTitleC] = useState(0);
     const [descc, setdescC] = useState(0);
     
     async function addListing() {
+        
+        const uploadPromises = image.map(singleImage => uploadToImgBB(singleImage.uri));
+        const uploadedLinks = await Promise.all(uploadPromises);
         const { error } = await supabase.from('Listings').insert({
             name: title,
             category: selectedSubCategoryId,
             desc: description,
             price: price,
+            pictures: uploadedLinks,
             user_id: profile?.id
         });
         if(error){
@@ -70,6 +73,8 @@ export default function AddScreen(){
         else{
             router.navigate('/(main)/(tabs)/myprofile')
         }
+        
+        
     }  
 
     useEffect(()=>{
@@ -94,19 +99,15 @@ export default function AddScreen(){
         }
 
         let result = await expoImagePicker.launchImageLibraryAsync({
-            mediaTypes: ['images', 'videos'],
-            aspect: [1, 1],
-            quality: 1,
+            mediaTypes: ['images'],
+            quality: 0.4,
             allowsMultipleSelection:true,
             selectionLimit: 20
         });
 
-        console.log(result.assets?.length);
-
         if (!result.canceled && image) {
             setImage(image.concat(...result.assets));
         }
-        console.log(image?.length);
     };
 
 
@@ -120,7 +121,7 @@ export default function AddScreen(){
                 <ScrollView contentContainerStyle={pageStyle.imgagesContainer} horizontal>
                     {image && image.map((img) =>(
                         <Pressable onPress={() => setImage([...image.slice(0, image.indexOf(img)), ...image.slice(image.indexOf(img) + 1)])}>
-                            <Image source={{uri: img.uri}} style={pageStyle.image} key = {img.uri}/>
+                            <Image source={{uri: img.uri}} style={pageStyle.image} key = {image.indexOf(img)}/>
                         </Pressable>
                     ))}
                     {image && <ImagePickerSmall onPress= {() => pickImage()}/>}

@@ -43,10 +43,12 @@ export default function IndexScreen(){
     return (
         <ScrollView style={pageStyle.mainPage}>
             {listings.map((listing: any) => (
+                
                 <ListingCard 
                     onPress={() => {}}
                     key={listing.id} 
                     name={listing.name.toString()}
+                    image={listing.pictures[0]}
                     price={listing.price.toString()}
                     isLiked={false}
                     category={findSubCategoryById(listing.category)?.name}

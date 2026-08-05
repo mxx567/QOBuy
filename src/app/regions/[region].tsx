@@ -14,6 +14,7 @@ export default function RegionScreen() {
     const params  = useLocalSearchParams<{regionid : string}>();
 
 
+
     const pageStyle = StyleSheet.create({
         mainContainer:{
             flex:1,
@@ -37,7 +38,7 @@ export default function RegionScreen() {
             try {
                 const { data: regiondata, error } = await supabase.from("places").select("*").eq("parent_id", params.regionid);
                 if (error) {
-                    console.error('Error fetching regions:', error.message);
+                    console.error("Supabase Error Message:", error.message);
                     return;
                 }
                 if (regiondata && regiondata.length > 0) {
@@ -65,7 +66,8 @@ export default function RegionScreen() {
                             router.dismissTo("/add");
                         }
                         else{
-                            router.push({pathname: "/regions/[region]", params: {regionid: regionData.id}})
+                            console.log(regionData.id);
+                            router.push({pathname: '/regions/[region]', params: {region: String(regionData.id)}});
                         };
                     }} isNext/>
                 ))
