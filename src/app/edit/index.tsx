@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { View, StatusBar, Alert, Image, Pressable, StyleSheet, ScrollView  } from "react-native";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import * as expoImagePicker from 'expo-image-picker'
 
 import { useListingCreationContext } from "@/src/hooks/ListingCreationContext";
 import { useAuthContext } from "@/src/hooks/AuthContext";
 
-import { uploadToImgBB } from "@/utils/imgbb";
+import { uploadedImage, uploadToImgBB } from "@/utils/imgbb";
 import { supabase } from "@/utils/supabase";
 
 import InputCounter from "@/src/components/common/InputCounter";
@@ -18,6 +18,7 @@ import CommonButton from "@/src/components/common/CommonButton";
 import CommonHeader from "@/src/components/common/CommonHeader";
 
 import { subCategory } from "@/src/data/subCategory";
+import category from "../categories/[category]";
 
 const pageStyle = StyleSheet.create({
     mainPage:{
@@ -47,37 +48,76 @@ const pageStyle = StyleSheet.create({
 
 export default function AddScreen(){
     const router = useRouter();
-    const { profile } = useAuthContext();
+    const {profile} = useAuthContext();
+
+    const [listing, setListing] = useState<any>();
     const [title, setTitle] = useState<string>('');
     const [description, setDescription] = useState<string>('');
-    const { selectedCategory, selectedSubCategoryId, selectedRegion } = useListingCreationContext();
-    const [price, setPrice] = useState<number>(0);
-
+    const { selectedCategory,setSelectedCategory, selectedSubCategoryId,setSelectedSubCategoryId, selectedRegion, setSelectedRegion } = useListingCreationContext();
+    const [price, setPrice] = useState<string>('');
+    const [existingImg, setExistingImg] = useState<any[]>();
+    
     const [titlec, setTitleC] = useState(0);
     const [descc, setdescC] = useState(0);
+
     
-    async function addListing() {
-        
+    const params = useLocalSearchParams<{listingid: string}>();
+
+    const updateListing = async (id: string) => {
         const uploadPromises = image.map(singleImage => uploadToImgBB(singleImage.uri));
-        const uploadedLinks = (await Promise.all(uploadPromises)).map(uploadedLink => JSON.stringify(uploadedLink));
-        const { error } = await supabase.from('Listings').insert({
-            name: title,
-            category: selectedSubCategoryId,
-            desc: description,
-            price: price,
-            pictures: uploadedLinks,
-            place_id: selectedRegion.regId,
-            user_id: profile?.id
-        });
+        const uploadedLinks = await Promise.all(uploadPromises);
+
+        setExistingImg(existingImg?.map((img: uploadedImage)=>(JSON.stringify(img))))
+
+
+
+        const { data, error } = await supabase
+            .from('Listings') // Target table
+            .update({
+                name: title,
+                category: selectedSubCategoryId,
+                desc: description,
+                price: price,
+                pictures: existingImg?.concat(...uploadedLinks),
+                place_id: selectedRegion.regId 
+            }) // Data to modify
+            .eq('id', id) // Filter to match row
+            .select(); // Optional: returns the updated row(s)
+
+        if (error) {
+            console.error('Error updating data:', error.message);
+            return;
+        }
+        
+        return data;
+    };
+
+
+    async function getListing(listingid: string) {
+        const{ data,error } = await supabase.from('Listings').select("*").eq("id", listingid);
+
         if(error){
             console.log(error.message);
         }
         else{
-            router.navigate('/(main)/(tabs)/myprofile')
+            if(data && data.length > 0){
+                setListing(data[0]);
+            }
         }
-        
-        
-    }  
+    }
+
+    useEffect(()=>{
+        getListing(params.listingid);
+        if(listing){
+            setExistingImg(listing.pictures.map((img: string) => (JSON.parse(img))));
+            setTitle(listing.name);
+            setDescription(listing.desc);
+            setSelectedRegion({ regId:0, full_path:''});
+            setSelectedCategory("");
+            setSelectedSubCategoryId(0);
+            setPrice(listing.price)
+        }
+    },[ ])
 
     useEffect(()=>{
         setTitleC(title.length);
@@ -112,15 +152,20 @@ export default function AddScreen(){
         }
     };
 
-
+    //
     return (
         <View style={pageStyle.mainPage}>
             <StatusBar />
             
-            <CommonHeader headerText="Create Listing"/>
+            <CommonHeader headerText="Edit Listing"/>
             
             <ScrollView contentContainerStyle={pageStyle.screenContainer}>
                 <ScrollView contentContainerStyle={pageStyle.imgagesContainer} horizontal>
+                    {existingImg && existingImg.map((img) =>(
+                        <Pressable onPress={() => {setExistingImg([...existingImg.slice(0, existingImg.indexOf(img)), ...existingImg.slice(existingImg.indexOf(img) + 1)])}}>
+                            <Image source={{uri: img.uri}} style={pageStyle.image} key = {existingImg.indexOf(img)}/>
+                        </Pressable>
+                    ))}
                     {image && image.map((img) =>(
                         <Pressable onPress={() => setImage([...image.slice(0, image.indexOf(img)), ...image.slice(image.indexOf(img) + 1)])}>
                             <Image source={{uri: img.uri}} style={pageStyle.image} key = {image.indexOf(img)}/>
@@ -135,10 +180,10 @@ export default function AddScreen(){
                 <InputLine placeholder="Description" value={description} onChangeText={setDescription} placeholderTextColor="#555" height={200} />
                 <InputCounter title="Description should contain minimum of 64 symbols" currentSymbolC={descc} maxSymbolC={4096}/>
             
-                <InputLine placeholder="Price" value={price.toString()} onChangeText={(text) => setPrice(Number(text))} placeholderTextColor="#555" inputMode="numeric" />
+                <InputLine placeholder="Price" value={price} onChangeText={(text) => setPrice(text)} placeholderTextColor="#555" inputMode="numeric" />
                 
                 <OptionButton title={selectedRegion.regId? selectedRegion.full_path : "Select a region"} isNext onPress={()=>{router.push("/regions")}}/>
-                <CommonButton title="Publish" isNext={false} onPress= {()=> {addListing();}}/>
+                <CommonButton title="Publish" isNext={false} onPress= {()=> updateListing(listing.id)}/>
             </ScrollView>
         </View>
     );

@@ -5,6 +5,9 @@ import CommonButton from '../components/common/CommonButton';
 import CommonErrorText from '../components/common/CommonErrorText';
 import { supabase } from '@/utils/supabase';
 import CommonHeader from '../components/common/CommonHeader';
+
+
+
 const loginStyle = StyleSheet.create({
     mainContainer:{
         flex:1,

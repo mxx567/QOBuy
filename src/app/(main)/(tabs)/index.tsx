@@ -1,10 +1,13 @@
 import { View, Text, ScrollView } from "react-native";
 import { StyleSheet } from "react-native";
 import { ListingCard } from "../../../components/common/ListingCard";
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { supabase } from "@/utils/supabase";
 import { subCategory, findSubCategoryById } from "@/src/data/subCategory";
 import date2string from "@/utils/date2string";
+import { uploadedImage } from "@/utils/imgbb";
+
+import { useRouter } from "expo-router";
 
 const pageStyle = StyleSheet.create({
     mainPage:{
@@ -19,6 +22,7 @@ const pageStyle = StyleSheet.create({
 export default function IndexScreen(){
     const [listings, setListings] = useState<any[]>([]);
 
+    const router = useRouter();
     useEffect(() => {
         
         const getListings = async () => {
@@ -45,10 +49,10 @@ export default function IndexScreen(){
             {listings.map((listing: any) => (
                 
                 <ListingCard 
-                    onPress={() => {}}
+                    onPress={() => {router.push({pathname: '/edit', params: {listingid: listing.id}})}}
                     key={listing.id} 
                     name={listing.name.toString()}
-                    image={listing.pictures[0]}
+                    image={JSON.parse(listing.pictures[0]).uri}
                     price={listing.price.toString()}
                     isLiked={false}
                     category={findSubCategoryById(listing.category)?.name}

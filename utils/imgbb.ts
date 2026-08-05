@@ -31,10 +31,14 @@ interface ImgBbResponse {
   status: number;
 }
 
-const apikey = process.env.EXPO_PUBLIC_IMGBB_API_KEY ?? '';
 
-console.log(apikey)
-export const uploadToImgBB = async (imageuri: string): Promise<string | null> => {
+export interface uploadedImage{
+    uri: string,
+    delete: string
+};
+
+const apikey = process.env.EXPO_PUBLIC_IMGBB_API_KEY ?? '';
+export const uploadToImgBB = async (imageuri: string): Promise<string | null | uploadedImage> => {
     // 1. Point the File class directly to your image's URI string
     const fileInstance = new File(imageuri);
 
@@ -62,8 +66,8 @@ export const uploadToImgBB = async (imageuri: string): Promise<string | null> =>
     const result: ImgBbResponse = await response.json();
 
     if (result.success) {
-        console.log(result.data.url)
-      return result.data.url;
+      const img: uploadedImage = { uri: result.data.url, delete: result.data.delete_url }
+      return (img);
     } else {
       console.error('ImgBB error:', result);
       return null;
