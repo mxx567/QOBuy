@@ -43,6 +43,9 @@ const pageStyle = StyleSheet.create({
 });
 
 
+
+
+
 export default function AddScreen(){
     const router = useRouter();
     const { profile } = useAuthContext();
@@ -55,7 +58,16 @@ export default function AddScreen(){
     const [descc, setdescC] = useState(0);
 
 
-    
+    function getCategoryTitle(){
+        const selectedCategoryItem = categories?.find((c) => c.id === selectedCategory);
+        const selectedSubCategoryItem = subCategories?.find((sc) => sc.id === selectedSubCategoryId);
+
+        return(
+            selectedCategoryItem && selectedSubCategoryItem
+                ? `${selectedCategoryItem.name}, ${selectedSubCategoryItem.name}`
+                : "Select Category"
+        );
+    }
     
     async function addListing() {
         
@@ -92,6 +104,10 @@ export default function AddScreen(){
         setdescC(description.length);
     },[title, description]);
 
+
+    useEffect(()=>{
+       
+    },[selectedCategory, selectedSubCategoryId])
 
     const [image, setImage] = useState<expoImagePicker.ImagePickerAsset[]>([]);
 
@@ -138,7 +154,7 @@ export default function AddScreen(){
                 <InputLine placeholder="Title" value={title} onChangeText={setTitle} placeholderTextColor="#555" />
                 <InputCounter title="Title should contain minimum of 16 symbols " currentSymbolC={titlec} maxSymbolC={64}/>
                 
-                <OptionButton title={selectedSubCategoryId ? categories?.find((category)=> category.id == selectedCategory).name + ", " + subCategories?.find((subCategory)=> subCategory.id == selectedSubCategoryId ).name: "Select Category" } isNext onPress={() => router.push('/categories')} />
+                <OptionButton title={getCategoryTitle()} isNext onPress={() => router.push('/categories')} />
                 <InputLine placeholder="Description" value={description} onChangeText={setDescription} placeholderTextColor="#555" height={200} />
                 <InputCounter title="Description should contain minimum of 64 symbols" currentSymbolC={descc} maxSymbolC={4096}/>
             

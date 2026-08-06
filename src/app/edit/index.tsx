@@ -47,6 +47,7 @@ export default function AddScreen(){
     const router = useRouter();
     const {profile} = useAuthContext();
 
+    const [id, setId] = useState();
     const [listing, setListing] = useState<any>();
     const [title, setTitle] = useState<string>('');
     const [description, setDescription] = useState<string>('');
@@ -58,18 +59,16 @@ export default function AddScreen(){
     const [descc, setdescC] = useState(0);
 
     useEffect(()=>{
-        setIsEditMode(false);
+        setIsEditMode(true);
     },[])
     
     const params = useLocalSearchParams<{listingid: string}>();
 
-    const updateListing = async (id: string) => {
+    const updateListing = async () => {
         const uploadPromises = image.map(singleImage => uploadToImgBB(singleImage.uri));
         const uploadedLinks = await Promise.all(uploadPromises);
 
         setExistingImg(existingImg?.map((img: uploadedImage)=>(JSON.stringify(img))))
-
-
 
         const { data, error } = await supabase
             .from('Listings') // Target table
@@ -88,7 +87,7 @@ export default function AddScreen(){
             console.error('Error updating data:', error.message);
             return null;
         }
-        
+        router.dismissTo('/(main)/(tabs)/myprofile');
         return data;
     };
 
@@ -115,12 +114,12 @@ export default function AddScreen(){
         
         
             if (fetchedListing) {
+                setId(fetchedListing.id);
                 setExistingImg(fetchedListing.pictures.map((img: string) => JSON.parse(img)));
                 setTitle(fetchedListing.name);
                 setDescription(fetchedListing.desc);
                 setSelectedRegion(fetchedListing.place_id);
                 setSelectedSubCategoryId(fetchedListing.category);
-                setSelectedCategory(subCategories.find((sc)=> sc.id == selectedSubCategoryId).category_id);
                 setPrice(fetchedListing.price);
             }
         }
@@ -132,6 +131,18 @@ export default function AddScreen(){
         setTitleC(title.length);
         setdescC(description.length);
     },[title, description]);
+
+    useEffect(() => {
+        if (!selectedSubCategoryId || subCategories.length === 0) return;
+
+        const matchedSubCategory = subCategories.find(
+            (sc) => sc.id === selectedSubCategoryId
+        );
+
+        if (matchedSubCategory) {
+            setSelectedCategory(matchedSubCategory.category_id);
+        }
+    }, [selectedSubCategoryId, subCategories]);
 
 
     const [image, setImage] = useState<expoImagePicker.ImagePickerAsset[]>([]);
@@ -186,13 +197,12 @@ export default function AddScreen(){
                 
                 <OptionButton title={selectedCategory ? categories.find((c) => c.id == selectedCategory).name + ", " + subCategories?.find((subCategory)=> subCategory.id == selectedSubCategoryId).name: "Select Category" } isNext onPress={() => router.push('/categories')} />
                 <InputLine placeholder="Description" value={description} onChangeText={setDescription} placeholderTextColor="#555" height={200} />
-                <InputLine placeholder="Description" value={description} onChangeText={setDescription} placeholderTextColor="#555" height={200} />
                 <InputCounter title="Description should contain minimum of 64 symbols" currentSymbolC={descc} maxSymbolC={4096}/>
             
-                <InputLine placeholder="Price" value={price} onChangeText={(text) => setPrice(text)} placeholderTextColor="#555" inputMode="numeric" />
+                <InputLine placeholder="Price" value={price} onChangeText={setPrice} placeholderTextColor="#555" inputMode="numeric" />
                 
                 <OptionButton title={regionsMap.placeById.get(selectedRegion) ? regionsMap.placeById.get(selectedRegion).full_path : "Select a region"} isNext onPress={()=>{router.push("/regions")}}/>
-                <CommonButton title="Publish" isNext={false} onPress= {()=> updateListing(listing.id)}/>
+                <CommonButton title="Publish" isNext={false} onPress= {()=> updateListing()}/>
             </ScrollView>
         </View>
     );
