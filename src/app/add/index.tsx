@@ -145,11 +145,11 @@ export default function AddScreen(){
             <ScrollView contentContainerStyle={pageStyle.screenContainer}>
                 <ScrollView contentContainerStyle={pageStyle.imgagesContainer} horizontal>
                     {image && image.map((img) =>(
-                        <Pressable onPress={() => setImage([...image.slice(0, image.indexOf(img)), ...image.slice(image.indexOf(img) + 1)])}>
-                            <Image source={{uri: img.uri}} style={pageStyle.image} key = {image.indexOf(img)}/>
+                        <Pressable key = {image.indexOf(img)} onPress={() => setImage([...image.slice(0, image.indexOf(img)), ...image.slice(image.indexOf(img) + 1)])}>
+                            <Image source={{uri: img.uri}} style={pageStyle.image} />
                         </Pressable>
                     ))}
-                    {image && <ImagePickerSmall onPress= {() => pickImage()}/>}
+                    {image && <ImagePickerSmall key={21} onPress= {() => pickImage()}/>}
                 </ScrollView>
                 <InputLine placeholder="Title" value={title} onChangeText={setTitle} placeholderTextColor="#555" />
                 <InputCounter title="Title should contain minimum of 16 symbols " currentSymbolC={titlec} maxSymbolC={64}/>

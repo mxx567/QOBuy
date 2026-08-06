@@ -24,6 +24,7 @@ export const ListingDescriptionContext = createContext<{
   regionsMap: RegionArray;
   isEditMode: boolean;
   setIsEditMode: (isEditMode: boolean) => void;
+  isLoading : boolean;
 }>({ 
       categories: [],
       subCategories: [],
@@ -35,7 +36,8 @@ export const ListingDescriptionContext = createContext<{
       setSelectedRegion: () => {},
       regionsMap: {places: [],placeById: new Map(), childrenByParent: new Map(), placesByLevel: new Map()},
       isEditMode: false,
-      setIsEditMode: () => {}
+      setIsEditMode: () => {},
+      isLoading: false
     }
   );
 
@@ -44,13 +46,16 @@ export const ListingDescriptionProvider = ({ children }: PropsWithChildren) => {
   const [selectedSubCategoryId, setSelectedSubCategoryId] = useState<number>(0);
   const [selectedRegion, setSelectedRegion] = useState<number>(0);
 
+  const[isLoading, setIsLoading] = useState<boolean>(false);
   const [categories, setCategories] = useState<any[]>([]);
   const [subCategories, setSubCategories] = useState<any[]>([]);
   const [regions, setRegions] = useState<any[]>([]);
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
+  
 
 
   useEffect(() => {
+    setIsLoading(true);
     async function loadData() {
       const [cats, subs, regs] = await Promise.all([
         getCategories(),
@@ -64,6 +69,7 @@ export const ListingDescriptionProvider = ({ children }: PropsWithChildren) => {
     }
 
     loadData();
+    setIsLoading(false);
   }, []);
 
 
@@ -93,11 +99,13 @@ export const ListingDescriptionProvider = ({ children }: PropsWithChildren) => {
     childrenByParent: childrenByParent
   }
 
+  
   return (
-    <ListingDescriptionContext.Provider value={{ selectedCategory, setSelectedCategory, selectedSubCategoryId, setSelectedSubCategoryId, selectedRegion, setSelectedRegion, categories, subCategories, regionsMap, isEditMode, setIsEditMode}}>
+    <ListingDescriptionContext.Provider value={{ selectedCategory, setSelectedCategory, selectedSubCategoryId, setSelectedSubCategoryId, selectedRegion, setSelectedRegion, categories, subCategories, regionsMap, isEditMode, setIsEditMode, isLoading}}>
       {children}
     </ListingDescriptionContext.Provider>
   );
+  
 };
 
 export const useListingDescriptionContext = () => useContext(ListingDescriptionContext);

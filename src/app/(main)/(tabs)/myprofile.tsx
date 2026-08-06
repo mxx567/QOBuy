@@ -5,6 +5,7 @@ import { useAuthContext } from "@/src/hooks/AuthContext";
 import { View, Text,Image } from "react-native";
 import { supabase } from "@/utils/supabase";
 import { StyleSheet } from "react-native";
+import { useRouter } from "expo-router";
 
 const pageStyle = StyleSheet.create({
     mainPage:{
@@ -32,6 +33,7 @@ const pageStyle = StyleSheet.create({
 export default function ProfileScreen(){
     const { profile } = useAuthContext();
 
+    const router = useRouter();
 
     async function onSignOutButtonPress() {
         const { error } = await supabase.auth.signOut()
@@ -39,12 +41,14 @@ export default function ProfileScreen(){
             console.error('Error signing out:', error)
         }
     }
+
+
     return (
         <View style={pageStyle.mainPage}>
             <Image source={{uri: profile.avatar_url}} style={pageStyle.image}/>
             <Text style={pageStyle.text}> Hello, {profile.username}! 👋 </Text>
             <View style = {pageStyle.buttons}>
-                <OptionButton title="My Listings" onPress={()=>{}} isNext/>
+                <OptionButton title="My Listings" onPress={()=>{router.push("/myListings")}} isNext/>
                 <OptionButton title="Options" onPress={()=>{}} isNext/>
             </View>
             

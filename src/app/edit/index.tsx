@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, StatusBar, Alert, Image, Pressable, StyleSheet, ScrollView  } from "react-native";
+import { View, StatusBar, Alert, Image, Pressable, StyleSheet, ScrollView, ActivityIndicator  } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import * as expoImagePicker from 'expo-image-picker'
 
@@ -51,7 +51,7 @@ export default function AddScreen(){
     const [listing, setListing] = useState<any>();
     const [title, setTitle] = useState<string>('');
     const [description, setDescription] = useState<string>('');
-    const { selectedCategory,setSelectedCategory, selectedSubCategoryId,setSelectedSubCategoryId, selectedRegion, setSelectedRegion, categories, subCategories, regionsMap, setIsEditMode } = useListingDescriptionContext();
+    const { selectedCategory,setSelectedCategory, selectedSubCategoryId,setSelectedSubCategoryId, selectedRegion, setSelectedRegion, categories, subCategories, regionsMap, setIsEditMode,isLoading } = useListingDescriptionContext();
     const [price, setPrice] = useState<string>('');
     const [existingImg, setExistingImg] = useState<any[]>();
     
@@ -85,6 +85,19 @@ export default function AddScreen(){
 
         if (error) {
             console.error('Error updating data:', error.message);
+            return null;
+        }
+        router.dismissTo('/(main)/(tabs)/myprofile');
+        return data;
+    };
+
+    const removeListing = async () => {
+        const { data, error } = await supabase
+            .from('Listings') // Target table
+            .delete().eq("id", id);
+
+        if (error) {
+            console.error('Error deleting data:', error.message);
             return null;
         }
         router.dismissTo('/(main)/(tabs)/myprofile');
@@ -175,34 +188,35 @@ export default function AddScreen(){
     return (
         <View style={pageStyle.mainPage}>
             <StatusBar />
-            
+                
             <CommonHeader headerText="Edit Listing"/>
-            
+                
             <ScrollView contentContainerStyle={pageStyle.screenContainer}>
-                <ScrollView contentContainerStyle={pageStyle.imgagesContainer} horizontal>
-                    {existingImg && existingImg.map((img) =>(
-                        <Pressable onPress={() => {setExistingImg([...existingImg.slice(0, existingImg.indexOf(img)), ...existingImg.slice(existingImg.indexOf(img) + 1)])}}>
-                            <Image source={{uri: img.uri}} style={pageStyle.image} key = {existingImg.indexOf(img)}/>
-                        </Pressable>
-                    ))}
-                    {image && image.map((img) =>(
-                        <Pressable onPress={() => setImage([...image.slice(0, image.indexOf(img)), ...image.slice(image.indexOf(img) + 1)])}>
-                            <Image source={{uri: img.uri}} style={pageStyle.image} key = {image.indexOf(img)}/>
-                        </Pressable>
-                    ))}
-                    {image && <ImagePickerSmall onPress= {() => pickImage()}/>}
+            <ScrollView contentContainerStyle={pageStyle.imgagesContainer} horizontal>
+                {existingImg && existingImg.map((img) =>(
+                    <Pressable key={existingImg.indexOf(img)} onPress={() => {setExistingImg([...existingImg.slice(0, existingImg.indexOf(img)), ...existingImg.slice(existingImg.indexOf(img) + 1)])}}>
+                        <Image source={{uri: img.uri}} style={pageStyle.image} key = {existingImg.indexOf(img)}/>
+                    </Pressable>
+                ))}
+                {image && image.map((img) =>(
+                    <Pressable key = {image.indexOf(img)} onPress={() => setImage([...image.slice(0, image.indexOf(img)), ...image.slice(image.indexOf(img) + 1)])}>
+                        <Image source={{uri: img.uri}} style={pageStyle.image}/>
+                    </Pressable>
+                ))}
+                {image && <ImagePickerSmall key={21} onPress= {() => pickImage()}/>}
                 </ScrollView>
                 <InputLine placeholder="Title" value={title} onChangeText={setTitle} placeholderTextColor="#555" />
                 <InputCounter title="Title should contain minimum of 16 symbols " currentSymbolC={titlec} maxSymbolC={64}/>
-                
+                    
                 <OptionButton title={selectedCategory ? categories.find((c) => c.id == selectedCategory).name + ", " + subCategories?.find((subCategory)=> subCategory.id == selectedSubCategoryId).name: "Select Category" } isNext onPress={() => router.push('/categories')} />
                 <InputLine placeholder="Description" value={description} onChangeText={setDescription} placeholderTextColor="#555" height={200} />
                 <InputCounter title="Description should contain minimum of 64 symbols" currentSymbolC={descc} maxSymbolC={4096}/>
-            
-                <InputLine placeholder="Price" value={price} onChangeText={setPrice} placeholderTextColor="#555" inputMode="numeric" />
                 
+                <InputLine placeholder="Price" value={price} onChangeText={setPrice} placeholderTextColor="#555" inputMode="numeric" />
+                    
                 <OptionButton title={regionsMap.placeById.get(selectedRegion) ? regionsMap.placeById.get(selectedRegion).full_path : "Select a region"} isNext onPress={()=>{router.push("/regions")}}/>
                 <CommonButton title="Publish" isNext={false} onPress= {()=> updateListing()}/>
+                <CommonButton title="Remove" isNext={false} onPress= {()=> removeListing()}/>
             </ScrollView>
         </View>
     );
