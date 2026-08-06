@@ -86,7 +86,7 @@ export default function AddScreen(){
 
         if (error) {
             console.error('Error updating data:', error.message);
-            return;
+            return null;
         }
         
         return data;
@@ -101,23 +101,32 @@ export default function AddScreen(){
         }
         else{
             if(data && data.length > 0){
-                setListing(data[0]);
+                return data[0];
             }
         }
     }
 
-    useEffect(()=>{
-        getListing(params.listingid);
-        if(listing){
-            setExistingImg(listing.pictures.map((img: string) => (JSON.parse(img))));
-            setTitle(listing.name);
-            setDescription(listing.desc);
-            setSelectedRegion({ regId:0, full_path:''});
-            setSelectedCategory("");
-            setSelectedSubCategoryId(0);
-            setPrice(listing.price)
+    useEffect(() => {
+        async function loadData() {
+            if (!params.listingid) return;
+        
+        
+            const fetchedListing = await getListing(params.listingid) ; 
+        
+        
+            if (fetchedListing) {
+                setExistingImg(fetchedListing.pictures.map((img: string) => JSON.parse(img)));
+                setTitle(fetchedListing.name);
+                setDescription(fetchedListing.desc);
+                setSelectedRegion({ regId: 0, full_path: '' });
+                setSelectedCategory("");
+                setSelectedSubCategoryId(0);
+                setPrice(fetchedListing.price);
+            }
         }
-    },[ ])
+
+        loadData();
+    }, [params.listingid]);
 
     useEffect(()=>{
         setTitleC(title.length);
