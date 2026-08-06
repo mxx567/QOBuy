@@ -4,8 +4,8 @@ import CommonHeader from '../../components/common/CommonHeader'
 import OptionButton from '@/src/components/common/OptionButton';
 import { supabase } from '@/utils/supabase';
 import { useState, useEffect } from 'react';
-import { useListingCreationContext } from '@/src/hooks/ListingCreationContext';
-import { Region } from '../../hooks/ListingCreationContext'
+import { useListingDescriptionContext } from '@/src/hooks/ListingDescriptionContext';
+import { Region } from '@/src/hooks/ListingDescriptionContext';
 
 
 export default function RegionScreen() {
@@ -27,7 +27,7 @@ export default function RegionScreen() {
         }
     });
 
-    const { setSelectedRegion } = useListingCreationContext();
+    const { setSelectedRegion } = useListingDescriptionContext();
     const [regiondata, setRegionData] = useState<any[]>([]);
 
     

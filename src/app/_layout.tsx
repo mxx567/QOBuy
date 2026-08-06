@@ -1,7 +1,7 @@
 import AuthProvider from '../providers/AuthProvider';
 import { Stack } from 'expo-router';
 import { useAuthContext } from '../hooks/AuthContext';
-import { ListingCreationProvider } from '../hooks/ListingCreationContext';
+import { ListingDescriptionProvider } from '../hooks/ListingDescriptionContext';
 
 
 function RootNavigator(){
@@ -25,9 +25,9 @@ export default function Layout(){
     
     return(
         <AuthProvider>
-            <ListingCreationProvider>
+            <ListingDescriptionProvider>
                 <RootNavigator />
-            </ListingCreationProvider>
+            </ListingDescriptionProvider>
         </AuthProvider>
     );
 }

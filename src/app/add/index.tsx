@@ -3,7 +3,7 @@ import { View, StatusBar, Alert, Image, Pressable, StyleSheet, ScrollView  } fro
 import { useRouter } from "expo-router";
 import * as expoImagePicker from 'expo-image-picker'
 
-import { useListingCreationContext } from "@/src/hooks/ListingCreationContext";
+import { useListingDescriptionContext } from "@/src/hooks/ListingDescriptionContext";
 import { useAuthContext } from "@/src/hooks/AuthContext";
 
 import { uploadToImgBB } from "@/utils/imgbb";
@@ -18,6 +18,7 @@ import CommonButton from "@/src/components/common/CommonButton";
 import CommonHeader from "@/src/components/common/CommonHeader";
 
 import { subCategory } from "@/src/data/subCategory";
+import category from "../categories/[category]";
 
 const pageStyle = StyleSheet.create({
     mainPage:{
@@ -50,7 +51,7 @@ export default function AddScreen(){
     const { profile } = useAuthContext();
     const [title, setTitle] = useState<string>('');
     const [description, setDescription] = useState<string>('');
-    const { selectedCategory, selectedSubCategoryId, selectedRegion } = useListingCreationContext();
+    const { selectedCategory, selectedSubCategoryId, selectedRegion, categories, subCategories } = useListingDescriptionContext();
     const [price, setPrice] = useState<number>(0);
 
     const [titlec, setTitleC] = useState(0);
@@ -131,7 +132,7 @@ export default function AddScreen(){
                 <InputLine placeholder="Title" value={title} onChangeText={setTitle} placeholderTextColor="#555" />
                 <InputCounter title="Title should contain minimum of 16 symbols " currentSymbolC={titlec} maxSymbolC={64}/>
                 
-                <OptionButton title={selectedSubCategoryId ? selectedCategory + ", " + subCategory[selectedCategory.toLowerCase()].find(subCat => subCat.id == selectedSubCategoryId)?.name : "Select Category" } isNext onPress={() => router.push('/categories')} />
+                <OptionButton title={selectedSubCategoryId ? categories?.find((category)=> category.id == selectedCategory).name + ", " + subCategories?.find((subCategory)=> subCategory.id == selectedSubCategoryId ).name: "Select Category" } isNext onPress={() => router.push('/categories')} />
                 <InputLine placeholder="Description" value={description} onChangeText={setDescription} placeholderTextColor="#555" height={200} />
                 <InputCounter title="Description should contain minimum of 64 symbols" currentSymbolC={descc} maxSymbolC={4096}/>
             

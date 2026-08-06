@@ -3,8 +3,8 @@ import { View, StatusBar, Alert, Image, Pressable, StyleSheet, ScrollView  } fro
 import { useLocalSearchParams, useRouter } from "expo-router";
 import * as expoImagePicker from 'expo-image-picker'
 
-import { useListingCreationContext } from "@/src/hooks/ListingCreationContext";
 import { useAuthContext } from "@/src/hooks/AuthContext";
+import { useListingDescriptionContext} from "@/src/hooks/ListingDescriptionContext";
 
 import { uploadedImage, uploadToImgBB } from "@/utils/imgbb";
 import { supabase } from "@/utils/supabase";
@@ -53,7 +53,7 @@ export default function AddScreen(){
     const [listing, setListing] = useState<any>();
     const [title, setTitle] = useState<string>('');
     const [description, setDescription] = useState<string>('');
-    const { selectedCategory,setSelectedCategory, selectedSubCategoryId,setSelectedSubCategoryId, selectedRegion, setSelectedRegion } = useListingCreationContext();
+    const { selectedCategory,setSelectedCategory, selectedSubCategoryId,setSelectedSubCategoryId, selectedRegion, setSelectedRegion, categories, subCategories } = useListingDescriptionContext();
     const [price, setPrice] = useState<string>('');
     const [existingImg, setExistingImg] = useState<any[]>();
     
@@ -119,7 +119,7 @@ export default function AddScreen(){
                 setTitle(fetchedListing.name);
                 setDescription(fetchedListing.desc);
                 setSelectedRegion({ regId: 0, full_path: '' });
-                setSelectedCategory("");
+                setSelectedCategory(0);
                 setSelectedSubCategoryId(0);
                 setPrice(fetchedListing.price);
             }
@@ -185,7 +185,8 @@ export default function AddScreen(){
                 <InputLine placeholder="Title" value={title} onChangeText={setTitle} placeholderTextColor="#555" />
                 <InputCounter title="Title should contain minimum of 16 symbols " currentSymbolC={titlec} maxSymbolC={64}/>
                 
-                <OptionButton title={selectedSubCategoryId ? selectedCategory + ", " + subCategory[selectedCategory.toLowerCase()].find(subCat => subCat.id == selectedSubCategoryId)?.name : "Select Category" } isNext onPress={() => router.push('/categories')} />
+                <OptionButton title={selectedSubCategoryId ? categories?.find((category)=> category.id == selectedCategory) + ", " + subCategories?.find((subCategory)=> subCategory.id == selectedSubCategoryId ): "Select Category" } isNext onPress={() => router.push('/categories')} />
+                <InputLine placeholder="Description" value={description} onChangeText={setDescription} placeholderTextColor="#555" height={200} />
                 <InputLine placeholder="Description" value={description} onChangeText={setDescription} placeholderTextColor="#555" height={200} />
                 <InputCounter title="Description should contain minimum of 64 symbols" currentSymbolC={descc} maxSymbolC={4096}/>
             
