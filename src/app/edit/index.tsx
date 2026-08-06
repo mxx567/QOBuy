@@ -17,9 +17,6 @@ import InputLine from "@/src/components/common/InputLine";
 import CommonButton from "@/src/components/common/CommonButton";
 import CommonHeader from "@/src/components/common/CommonHeader";
 
-import { subCategory } from "@/src/data/subCategory";
-import category from "../categories/[category]";
-
 const pageStyle = StyleSheet.create({
     mainPage:{
         flex: 1,
@@ -53,13 +50,16 @@ export default function AddScreen(){
     const [listing, setListing] = useState<any>();
     const [title, setTitle] = useState<string>('');
     const [description, setDescription] = useState<string>('');
-    const { selectedCategory,setSelectedCategory, selectedSubCategoryId,setSelectedSubCategoryId, selectedRegion, setSelectedRegion, categories, subCategories } = useListingDescriptionContext();
+    const { selectedCategory,setSelectedCategory, selectedSubCategoryId,setSelectedSubCategoryId, selectedRegion, setSelectedRegion, categories, subCategories, regionsMap, setIsEditMode } = useListingDescriptionContext();
     const [price, setPrice] = useState<string>('');
     const [existingImg, setExistingImg] = useState<any[]>();
     
     const [titlec, setTitleC] = useState(0);
     const [descc, setdescC] = useState(0);
 
+    useEffect(()=>{
+        setIsEditMode(false);
+    },[])
     
     const params = useLocalSearchParams<{listingid: string}>();
 
@@ -79,7 +79,7 @@ export default function AddScreen(){
                 desc: description,
                 price: price,
                 pictures: existingImg?.concat(...uploadedLinks),
-                place_id: selectedRegion.regId 
+                place_id: selectedRegion
             }) // Data to modify
             .eq('id', id) // Filter to match row
             .select(); // Optional: returns the updated row(s)
@@ -118,9 +118,9 @@ export default function AddScreen(){
                 setExistingImg(fetchedListing.pictures.map((img: string) => JSON.parse(img)));
                 setTitle(fetchedListing.name);
                 setDescription(fetchedListing.desc);
-                setSelectedRegion({ regId: 0, full_path: '' });
-                setSelectedCategory(0);
-                setSelectedSubCategoryId(0);
+                setSelectedRegion(fetchedListing.place_id);
+                setSelectedSubCategoryId(fetchedListing.category);
+                setSelectedCategory(subCategories.find((sc)=> sc.id == selectedSubCategoryId).category_id);
                 setPrice(fetchedListing.price);
             }
         }
@@ -161,7 +161,6 @@ export default function AddScreen(){
         }
     };
 
-    //
     return (
         <View style={pageStyle.mainPage}>
             <StatusBar />
@@ -185,14 +184,14 @@ export default function AddScreen(){
                 <InputLine placeholder="Title" value={title} onChangeText={setTitle} placeholderTextColor="#555" />
                 <InputCounter title="Title should contain minimum of 16 symbols " currentSymbolC={titlec} maxSymbolC={64}/>
                 
-                <OptionButton title={selectedSubCategoryId ? categories?.find((category)=> category.id == selectedCategory) + ", " + subCategories?.find((subCategory)=> subCategory.id == selectedSubCategoryId ): "Select Category" } isNext onPress={() => router.push('/categories')} />
+                <OptionButton title={selectedCategory ? categories.find((c) => c.id == selectedCategory).name + ", " + subCategories?.find((subCategory)=> subCategory.id == selectedSubCategoryId).name: "Select Category" } isNext onPress={() => router.push('/categories')} />
                 <InputLine placeholder="Description" value={description} onChangeText={setDescription} placeholderTextColor="#555" height={200} />
                 <InputLine placeholder="Description" value={description} onChangeText={setDescription} placeholderTextColor="#555" height={200} />
                 <InputCounter title="Description should contain minimum of 64 symbols" currentSymbolC={descc} maxSymbolC={4096}/>
             
                 <InputLine placeholder="Price" value={price} onChangeText={(text) => setPrice(text)} placeholderTextColor="#555" inputMode="numeric" />
                 
-                <OptionButton title={selectedRegion.regId? selectedRegion.full_path : "Select a region"} isNext onPress={()=>{router.push("/regions")}}/>
+                <OptionButton title={regionsMap.placeById.get(selectedRegion) ? regionsMap.placeById.get(selectedRegion).full_path : "Select a region"} isNext onPress={()=>{router.push("/regions")}}/>
                 <CommonButton title="Publish" isNext={false} onPress= {()=> updateListing(listing.id)}/>
             </ScrollView>
         </View>

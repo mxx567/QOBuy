@@ -17,9 +17,6 @@ import InputLine from "@/src/components/common/InputLine";
 import CommonButton from "@/src/components/common/CommonButton";
 import CommonHeader from "@/src/components/common/CommonHeader";
 
-import { subCategory } from "@/src/data/subCategory";
-import category from "../categories/[category]";
-
 const pageStyle = StyleSheet.create({
     mainPage:{
         flex: 1,
@@ -51,11 +48,14 @@ export default function AddScreen(){
     const { profile } = useAuthContext();
     const [title, setTitle] = useState<string>('');
     const [description, setDescription] = useState<string>('');
-    const { selectedCategory, selectedSubCategoryId, selectedRegion, categories, subCategories } = useListingDescriptionContext();
+    const { selectedCategory, selectedSubCategoryId, selectedRegion, setSelectedCategory, setSelectedRegion, setSelectedSubCategoryId, categories, subCategories, regionsMap,setIsEditMode } = useListingDescriptionContext();
     const [price, setPrice] = useState<number>(0);
 
     const [titlec, setTitleC] = useState(0);
     const [descc, setdescC] = useState(0);
+
+
+    
     
     async function addListing() {
         
@@ -67,7 +67,7 @@ export default function AddScreen(){
             desc: description,
             price: price,
             pictures: uploadedLinks,
-            place_id: selectedRegion.regId,
+            place_id: selectedRegion,
             user_id: profile?.id
         });
         if(error){
@@ -79,6 +79,13 @@ export default function AddScreen(){
         
         
     }  
+
+    useEffect(()=>{
+        setIsEditMode(false);
+        setSelectedCategory(0);
+        setSelectedRegion(0);
+        setSelectedSubCategoryId(0)
+    }, [])
 
     useEffect(()=>{
         setTitleC(title.length);
@@ -113,7 +120,6 @@ export default function AddScreen(){
         }
     };
 
-
     return (
         <View style={pageStyle.mainPage}>
             <StatusBar />
@@ -138,7 +144,7 @@ export default function AddScreen(){
             
                 <InputLine placeholder="Price" value={price.toString()} onChangeText={(text) => setPrice(Number(text))} placeholderTextColor="#555" inputMode="numeric" />
                 
-                <OptionButton title={selectedRegion.regId? selectedRegion.full_path : "Select a region"} isNext onPress={()=>{router.push("/regions")}}/>
+                <OptionButton title={regionsMap.placeById.get(selectedRegion) ? regionsMap.placeById.get(selectedRegion).full_path : "Select a region"} isNext onPress={()=>{router.push("/regions")}}/>
                 <CommonButton title="Publish" isNext={false} onPress= {()=> {addListing();}}/>
             </ScrollView>
         </View>

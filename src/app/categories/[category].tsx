@@ -25,7 +25,7 @@ export default function category() {
 
 
 
-    const { selectedCategory, setSelectedCategory, selectedSubCategoryId, setSelectedSubCategoryId, subCategories, categories} = useListingDescriptionContext();
+    const { selectedCategory, setSelectedCategory, selectedSubCategoryId, setSelectedSubCategoryId, subCategories, categories, isEditMode} = useListingDescriptionContext();
 
 
 
@@ -42,7 +42,12 @@ export default function category() {
                         onPress={() => {
                             setSelectedCategory(subCat.category_id);
                             setSelectedSubCategoryId(subCat.id);
-                            router.dismissTo("/add")
+                            if(isEditMode){
+                                router.dismissTo("/edit");
+                            }
+                            else{
+                                router.dismissTo("/add")
+                            }
                         }}
                     />)
                 }

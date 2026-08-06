@@ -1,13 +1,15 @@
 import { getCategories, getSubCategories } from '@/utils/categoryManager';
 import { createContext, PropsWithChildren, useEffect, useState } from 'react';
 import { useContext } from 'react';
-import category from '../app/categories/[category]';
+import { getRegions } from '@/utils/regionManager';
 
-export type Region = {
-  regId: number,
-  full_path: string
+
+type RegionArray = {
+  places: any[],
+  placeById: Map<number | null, any>
+  childrenByParent: Map<number | null, any[]>,
+  placesByLevel: Map<number, any[]>,
 }
-
 
 
 export const ListingDescriptionContext = createContext<{
@@ -15,10 +17,13 @@ export const ListingDescriptionContext = createContext<{
   selectedSubCategoryId: number;
   setSelectedCategory: (name: number) => void;
   setSelectedSubCategoryId: (id: number) => void;
-  selectedRegion: Region;
-  setSelectedRegion: (region: Region) => void;
+  selectedRegion: number;
+  setSelectedRegion: (region: number) => void;
   categories: any[];
-  subCategories: any[]
+  subCategories: any[];
+  regionsMap: RegionArray;
+  isEditMode: boolean;
+  setIsEditMode: (isEditMode: boolean) => void;
 }>({ 
       categories: [],
       subCategories: [],
@@ -26,36 +31,70 @@ export const ListingDescriptionContext = createContext<{
       setSelectedCategory: () => {},
       selectedSubCategoryId: 0, 
       setSelectedSubCategoryId: ()=>{}, 
-      selectedRegion: {regId: 0, full_path: ''}, 
-      setSelectedRegion: () => {}}
-    
+      selectedRegion: 0, 
+      setSelectedRegion: () => {},
+      regionsMap: {places: [],placeById: new Map(), childrenByParent: new Map(), placesByLevel: new Map()},
+      isEditMode: false,
+      setIsEditMode: () => {}
+    }
   );
 
 export const ListingDescriptionProvider = ({ children }: PropsWithChildren) => {
   const [selectedCategory, setSelectedCategory] = useState<number>(0);
-  const [selectedSubCategoryId, setSelectedSubCategoryId] = useState<number>(0)
-  const [selectedRegion, setSelectedRegion] = useState<Region>({regId: 0, full_path: ''})
+  const [selectedSubCategoryId, setSelectedSubCategoryId] = useState<number>(0);
+  const [selectedRegion, setSelectedRegion] = useState<number>(0);
 
   const [categories, setCategories] = useState<any[]>([]);
   const [subCategories, setSubCategories] = useState<any[]>([]);
+  const [regions, setRegions] = useState<any[]>([]);
+  const [isEditMode, setIsEditMode] = useState<boolean>(false);
+
 
   useEffect(() => {
     async function loadData() {
-      const [cats, subs] = await Promise.all([
+      const [cats, subs, regs] = await Promise.all([
         getCategories(),
         getSubCategories(),
+        getRegions()
       ]);
 
       setCategories(cats ?? []);
       setSubCategories(subs ?? []);
+      setRegions(regs ?? []);
     }
 
     loadData();
   }, []);
 
 
+  const placesByLevel = new Map<number, any[]>();
+
+  const childrenByParent = new Map<number | null, any[]>();
+
+  const placeById = new Map<number, any>();
+
+  for (const place of regions) {
+      placeById.set(place.id, place);
+
+      const children = childrenByParent.get(Number(place.parent_id)) ?? [];
+      children.push(place);
+      childrenByParent.set(Number(place.parent_id), children);
+
+      const arr = placesByLevel.get(place.level) ?? [];
+      arr.push(place);
+      placesByLevel.set(place.level, arr);
+  }
+
+
+  const regionsMap: RegionArray = {
+    places: regions,
+    placeById: placeById,
+    placesByLevel: placesByLevel,
+    childrenByParent: childrenByParent
+  }
+
   return (
-    <ListingDescriptionContext.Provider value={{ selectedCategory, setSelectedCategory, selectedSubCategoryId, setSelectedSubCategoryId, selectedRegion, setSelectedRegion, categories, subCategories}}>
+    <ListingDescriptionContext.Provider value={{ selectedCategory, setSelectedCategory, selectedSubCategoryId, setSelectedSubCategoryId, selectedRegion, setSelectedRegion, categories, subCategories, regionsMap, isEditMode, setIsEditMode}}>
       {children}
     </ListingDescriptionContext.Provider>
   );
