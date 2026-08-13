@@ -30,7 +30,7 @@ const pageStyle = StyleSheet.create({
 
 
 
-export default function IndexScreen(){
+export default function FavoritesScreen(){
     const [listings, setListings] = useState<any[]>([]);
 
     const {categories, subCategories} = useListingDescriptionContext();
@@ -38,8 +38,7 @@ export default function IndexScreen(){
     const [likedListingIds, setLikedListingIds] = useState<number[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
-
-    const navigation = useNavigation(); 
+    const navigation = useNavigation();
 
     const { profile, isLoading: isAuthLoading } = useAuthContext();
 
@@ -86,7 +85,6 @@ export default function IndexScreen(){
         setLikedListingIds(next);
         try {
             // actual process
-            console.log('jopa')
             if (isFavorited) {
                 await likeListing(listingId);
             } else {
@@ -134,15 +132,6 @@ export default function IndexScreen(){
         return unsubscribe;
     }, [userId, isAuthLoading, navigation]);
 
-
-
-    useEffect(()=>{
-        
-
-        // Clean up the listener on unmount
-        
-    }, [])
-
     const router = useRouter();
 
 
@@ -165,22 +154,23 @@ export default function IndexScreen(){
         <ScrollView style={pageStyle.mainPage}>
             {listings.map((listing: any) => {
                 const isLiked = likedListingIds.includes(listing.id);
-                return(
-                    <ListingCard 
-                        onPress={() => {}}
-                        key={listing.id} 
-                        name={listing.name.toString()}
-                        image={JSON.parse(listing.pictures[0]).uri}
-                        price={listing.price.toString()}
-                        isLiked={isLiked}
-                        category={subCategories.find((subc) => subc.id == listing.category).name}
-                        onLikePress={(nextIsLiked)=>  toggleFavorite(listing.id, nextIsLiked)}
-                        publishDate={date2string(listing.created_at)}
-                    />
-                );
+                if(isLiked){
+                    return(
+                        <ListingCard 
+                            onPress={() => {}}
+                            key={listing.id} 
+                            name={listing.name.toString()}
+                            image={JSON.parse(listing.pictures[0]).uri}
+                            price={listing.price.toString()}
+                            isLiked={isLiked}
+                            category={subCategories.find((subc) => subc.id == listing.category).name}
+                            onLikePress={(nextIsLiked)=>  toggleFavorite(listing.id, nextIsLiked)}
+                            publishDate={date2string(listing.created_at)}
+                        />
+                    );
+                }
             })}
         </ScrollView>
     );
 }
-
 

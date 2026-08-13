@@ -1,6 +1,6 @@
 import { Pressable, Text, StyleSheet, ImageSourcePropType, Image, View } from "react-native";
 import { LikeButton } from "./LikeButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface ListingProps {
     image?: string,
@@ -9,7 +9,8 @@ interface ListingProps {
     category?: string,
     publishDate?: string,
     price?: string,
-    onPress(): void
+    onPress(): void,
+    onLikePress(nextValue : boolean): void
 };
 
 
@@ -56,11 +57,15 @@ const ListingStyle = StyleSheet.create({
 
 
 
-const ListingCard = ({image, name ='UNKNOWN' ,isLiked = false , category = 'Unknown',publishDate = 'Jan 01, 1970 at 10:00', price = 'Null', onPress} : ListingProps) => {
+const ListingCard = ({image, name ='UNKNOWN' ,isLiked = false , category = 'Unknown',publishDate = 'Jan 01, 1970 at 10:00', price = 'Null', onPress, onLikePress} : ListingProps) => {
     if(image === undefined){
         image = 'https://i.ibb.co.com/9mGCjPYY/notfound.png';
     }
     const [liked, setLiked] = useState(isLiked);
+
+    useEffect(() => {
+        setLiked(isLiked);
+    }, [isLiked]);
     return (
         <Pressable style={ListingStyle.listingContainer} onPress={onPress}>
             <Image source = {{uri: image}} style={ListingStyle.listingImage}/>
@@ -73,7 +78,12 @@ const ListingCard = ({image, name ='UNKNOWN' ,isLiked = false , category = 'Unkn
                         <Text style = {ListingStyle.smallText}>{category}</Text>
                         <Text style = {ListingStyle.smallText}>{publishDate}</Text>
                     </View>
-                    <LikeButton isLiked={liked} width={30} height={30} onPress = {() => {setLiked(!liked)}}/>
+                    <LikeButton isLiked={liked} width={30} height={30} onPress = {()=>{
+                            const nextLiked = !liked;
+                            setLiked(nextLiked);
+                            onLikePress?.(nextLiked);
+                            
+                        }}/>
                 </View>
             </View>
         </Pressable>

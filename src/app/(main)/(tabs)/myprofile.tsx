@@ -48,7 +48,7 @@ export default function ProfileScreen(){
             <Image source={{uri: profile.avatar_url}} style={pageStyle.image}/>
             <Text style={pageStyle.text}> Hello, {profile.username}! 👋 </Text>
             <View style = {pageStyle.buttons}>
-                <OptionButton title="My Listings" onPress={()=>{router.push("/myListings")}} isNext/>
+                <OptionButton title="My Listings" onPress={()=>{router.push("/mylistings")}} isNext/>
                 <OptionButton title="Options" onPress={()=>{}} isNext/>
             </View>
             
