@@ -32,7 +32,6 @@ export default function Carousel({data} : {data : uploadedImage[]}){
         if (viewableItems && viewableItems.length > 0) {
             const currentIndex = viewableItems[0].index;
             setFocusedIndex(currentIndex+1);
-            console.log("Current Focused Index:", currentIndex);
         }
     }).current;
     return(

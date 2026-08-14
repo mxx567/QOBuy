@@ -7,6 +7,10 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView, StyleSheet, View, Text, Image, StatusBar } from "react-native";
 import category from "../categories/[category]";
 import Carousel from "@/src/components/common/carousel";
+import CommonHeader from "@/src/components/common/CommonHeader";
+import { LikeButton } from "@/src/components/common/LikeButton";
+import { ListingLikeButton } from "@/src/components/common/ListingLikeButton";
+import date2string from "@/utils/date2string";
 
 const pageStyle = StyleSheet.create({
     mainPage:{
@@ -15,7 +19,6 @@ const pageStyle = StyleSheet.create({
     },
     text:{
         color: 'white',
-        alignSelf: 'center',
     },
     image:{
         width: 200,
@@ -26,6 +29,31 @@ const pageStyle = StyleSheet.create({
         backgroundColor: '#1B1818',
         alignContent: 'center',
         justifyContent: 'center'
+    },
+    nameText:{
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: 'white'
+    },
+    priceText:{
+        fontSize: 32,
+        fontWeight:'bold',
+        color: 'white'
+    },
+    namePriceContainer:{
+        flexDirection: 'row',
+        padding: 15
+    },
+    likeButton:{
+        marginLeft: 'auto',
+        marginRight: 10,
+        marginTop: -25,
+        backgroundColor: "#2f2f2f",
+        borderRadius: 100,
+        width:45,
+        height: 45,
+        alignItems: 'center',
+        justifyContent: 'center'
     }
 });
 
@@ -34,6 +62,8 @@ const pageStyle = StyleSheet.create({
 export default function ListingScreen(){
     const params = useLocalSearchParams<{listingid: string}>();
     
+    const [isLiked, setIsLiked] = useState<boolean>();
+
     const {subCategories, regionsMap} = useListingDescriptionContext();
 
     const [listing, setListing ] = useState<any[]>();
@@ -72,7 +102,7 @@ export default function ListingScreen(){
             return;
         }
 
-        setLikedListingIds((data ?? []).map((row: any) => row.listing_id));
+        return (data ?? []).map((row: any) => row.listing_id);
     };
 
     async function toggleFavorite(listingId : number, isFavorited: boolean) {
@@ -80,13 +110,7 @@ export default function ListingScreen(){
 
         if(!userId) return;
 
-        const previous = likedListingIds;
-
-        const next = isFavorited
-            ? likedListingIds.filter((id) => id !== listingId)
-            : [...likedListingIds, listingId];
-
-        setLikedListingIds(next);
+        
         try {
             // actual process
             if (isFavorited) {
@@ -97,7 +121,6 @@ export default function ListingScreen(){
             
         } catch (err) {
             // rollback if prediction failed
-            setLikedListingIds(previous);
             console.log("Couldn't update favorite, try again");
         }
     }
@@ -124,18 +147,18 @@ export default function ListingScreen(){
     
         const loadData = async () => {
             setIsLoading(true);
-            await Promise.all([getLikedListings()]);
+            const fetchedLikedListings = await getLikedListings();
             const fetchedListing = await getListing();
             if(fetchedListing){
                 setExistingImg(fetchedListing[0].pictures.map((img: string) => JSON.parse(img)));
+                setIsLiked(fetchedLikedListings?.includes(Number(params.listingid)));
                 setListing(fetchedListing);
             }
-            
             setIsLoading(false);
             
-        
+            console.log(isLiked);
         };
-    
+        
         loadData();
         
     }, [userId, isAuthLoading]);
@@ -157,17 +180,31 @@ export default function ListingScreen(){
         );
     }
 
-
+   
     return(
         <View style= {pageStyle.mainPage}>
+            
             <StatusBar/>
+            <CommonHeader headerText="Listing"/>
             {listing && 
+                
                 <ScrollView>
                     {existingImg && <Carousel data={existingImg}/>}
-                    <Text style= {pageStyle.text}>{listing[0].name}</Text>
+                    <View style = {pageStyle.namePriceContainer}>
+                        <View>
+                            
+                            <Text style= {pageStyle.nameText}>{listing[0].name}</Text>
+                            <Text style= {pageStyle.priceText}>{listing[0].price} KZT</Text>
+                            <Text style = {pageStyle.text}>{date2string(listing[0].created_at)}</Text>
+                        </View>
+                        <View style = {pageStyle.likeButton}>
+                            <ListingLikeButton isLiked={isLiked ? true : false} onLikePress={(nextIsLiked)=>  toggleFavorite(listing[0].id, nextIsLiked)}/>
+                        </View>
+                    </View>
+                    
                     <Text style= {pageStyle.text}>{listing[0].desc}</Text>
                     <Text style= {pageStyle.text}>{subCategories.find((subc) => subc.id == listing[0].category).name}</Text>
-                    <Text style= {pageStyle.text}>{listing[0].price} KZT</Text>
+                    
                 </ScrollView>
             }
             

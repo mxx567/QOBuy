@@ -31,11 +31,13 @@ const ListingStyle = StyleSheet.create({
     title:{
         fontFamily: 'HelveticaNeue-Bold',
         color: 'white',
-        fontSize: 20
+        fontSize: 20,
+        maxWidth: 200
     },
     price:{
         fontFamily: 'HelveticaNeue-Bold',
         color: 'white',
+        fontWeight: 'bold',
         fontSize: 20
     },
     smallText:{
@@ -72,7 +74,7 @@ const ListingCard = ({image, name ='UNKNOWN' ,isLiked = false , category = 'Unkn
 
             <View style = {ListingStyle.rightContainer}>
                 <Text style = {ListingStyle.title}>{name}</Text>
-                <Text style = {ListingStyle.price}>{price}</Text>
+                <Text style = {ListingStyle.price}>{price + " KZT"}</Text>
                 <View style = {ListingStyle.bottomContainer}>
                     <View style ={ListingStyle.catdate}>
                         <Text style = {ListingStyle.smallText}>{category}</Text>
