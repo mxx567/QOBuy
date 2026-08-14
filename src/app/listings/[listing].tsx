@@ -1,24 +1,25 @@
-import { View, Text, ScrollView, ActivityIndicator } from "react-native";
-import { StyleSheet } from "react-native";
-import { ListingCard } from "../../../components/common/ListingCard";
-import { useEffect, useReducer, useState } from "react";
-import { supabase } from "@/utils/supabase";
-import date2string from "@/utils/date2string";
-import { uploadedImage } from "@/utils/imgbb";
-
-import { useNavigation, useRouter } from "expo-router";
-import { useListingDescriptionContext } from "@/src/hooks/ListingDescriptionContext";
 import { useAuthContext } from "@/src/hooks/AuthContext";
+import { useListingDescriptionContext } from "@/src/hooks/ListingDescriptionContext";
+import { uploadedImage } from "@/utils/imgbb";
+import { supabase } from "@/utils/supabase";
+import { useLocalSearchParams, useNavigation } from "expo-router";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, ScrollView, StyleSheet, View, Text, Image, StatusBar } from "react-native";
+import category from "../categories/[category]";
+import Carousel from "@/src/components/common/carousel";
 
 const pageStyle = StyleSheet.create({
     mainPage:{
-        flex: 1,
-        backgroundColor: '#1B1818',
-        marginTop: 50,
+        flex:1,
+        backgroundColor: '#1B1818'
     },
     text:{
         color: 'white',
         alignSelf: 'center',
+    },
+    image:{
+        width: 200,
+        height: 200
     },
     loadingContainer:{
         flex:1,
@@ -30,15 +31,17 @@ const pageStyle = StyleSheet.create({
 
 
 
-export default function IndexScreen(){
-    const [listings, setListings] = useState<any[]>([]);
+export default function ListingScreen(){
+    const params = useLocalSearchParams<{listingid: string}>();
+    
+    const {subCategories, regionsMap} = useListingDescriptionContext();
 
-    const {categories, subCategories} = useListingDescriptionContext();
+    const [listing, setListing ] = useState<any[]>();
 
     const [likedListingIds, setLikedListingIds] = useState<number[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
-
+    const [existingImg, setExistingImg] = useState<any[]>();
     const navigation = useNavigation(); 
 
     const { profile, isLoading: isAuthLoading } = useAuthContext();
@@ -86,7 +89,6 @@ export default function IndexScreen(){
         setLikedListingIds(next);
         try {
             // actual process
-            console.log('jopa')
             if (isFavorited) {
                 await likeListing(listingId);
             } else {
@@ -99,48 +101,49 @@ export default function IndexScreen(){
             console.log("Couldn't update favorite, try again");
         }
     }
-
     
-    const getListings = async () => {
-        const { data, error } = await supabase.from("Listings").select("*");
+    const getListing = async () => {
+        const { data, error } = await supabase.from("Listings").select("*").eq("id", params.listingid);
         if (error) {
-            console.error("Error fetching listings:", error.message);
+            console.error("Error fetching listing:", error.message);
             return;
         }
-        setListings(data ?? []);
+        if(data){
+            return data;
+        }
     };
 
     useEffect(() => {
-        const unsubscribe = navigation.addListener('focus', () => {
-            if (isAuthLoading) return;
-
-            if (!userId) {
-                setListings([]);
-                setLikedListingIds([]);
-                setIsLoading(false);
-                return;
+        if (isAuthLoading) return;
+    
+        if (!userId) {
+            setLikedListingIds([]);
+            setIsLoading(false);
+            return;
+        }
+    
+        const loadData = async () => {
+            setIsLoading(true);
+            await Promise.all([getLikedListings()]);
+            const fetchedListing = await getListing();
+            if(fetchedListing){
+                setExistingImg(fetchedListing[0].pictures.map((img: string) => JSON.parse(img)));
+                setListing(fetchedListing);
             }
-
-            const loadData = async () => {
-                setIsLoading(true);
-                await Promise.all([getLikedListings(), getListings()]);
-                setIsLoading(false);
-            };
-
-            loadData();
-        });
+            
+            setIsLoading(false);
+            
         
-
-        return unsubscribe;
-    }, [userId, isAuthLoading, navigation]);
-
-
-    const router = useRouter();
+        };
+    
+        loadData();
+        
+    }, [userId, isAuthLoading]);
 
 
     if (isAuthLoading || isLoading) {
         return (
-        <View style={pageStyle.loadingContainer}>
+        <View style={pageStyle.loadingContainer} >
             <ActivityIndicator size="large" color="#fff" />
         </View>
         );
@@ -153,26 +156,21 @@ export default function IndexScreen(){
         </View>
         );
     }
-    return (
-        <ScrollView style={pageStyle.mainPage}>
-            {listings.map((listing: any) => {
-                const isLiked = likedListingIds.includes(listing.id);
-                return(
-                    <ListingCard 
-                        onPress={() => {router.push({pathname: "/listings/[listing]", params: {listingid : listing.id}})}}
-                        key={listing.id} 
-                        name={listing.name.toString()}
-                        image={JSON.parse(listing.pictures[0]).uri}
-                        price={listing.price.toString()}
-                        isLiked={isLiked}
-                        category={subCategories.find((subc) => subc.id == listing.category).name}
-                        onLikePress={(nextIsLiked)=>  toggleFavorite(listing.id, nextIsLiked)}
-                        publishDate={date2string(listing.created_at)}
-                    />
-                );
-            })}
-        </ScrollView>
+
+
+    return(
+        <View style= {pageStyle.mainPage}>
+            <StatusBar/>
+            {listing && 
+                <ScrollView>
+                    {existingImg && <Carousel data={existingImg}/>}
+                    <Text style= {pageStyle.text}>{listing[0].name}</Text>
+                    <Text style= {pageStyle.text}>{listing[0].desc}</Text>
+                    <Text style= {pageStyle.text}>{subCategories.find((subc) => subc.id == listing[0].category).name}</Text>
+                    <Text style= {pageStyle.text}>{listing[0].price} KZT</Text>
+                </ScrollView>
+            }
+            
+        </View>
     );
 }
-
-
