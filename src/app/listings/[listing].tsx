@@ -20,6 +20,7 @@ const pageStyle = StyleSheet.create({
     },
     text:{
         color: 'white',
+        padding: 5
     },
     image:{
         width: 200,
@@ -56,6 +57,31 @@ const pageStyle = StyleSheet.create({
         height: 45,
         alignItems: 'center',
         justifyContent: 'center'
+    },
+    textHeader:{
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize:20
+    },
+    descContainer:{
+        padding: 15,
+        gap: 10
+    },
+    userContainer:{
+        padding: 15,
+        gap: 10
+    },
+    secondaryText:{
+        color: "#4b4b4b"
+    },
+    locationContainer:{
+        padding:15,
+        flexDirection: "row",
+        alignItems: 'center',
+    },
+    locationIcon:{
+        width:20,
+        height:20
     }
 });
 
@@ -197,16 +223,27 @@ export default function ListingScreen(){
                             
                             <Text style= {pageStyle.nameText}>{listing[0].name}</Text>
                             <Text style= {pageStyle.priceText}>{listing[0].price} KZT</Text>
-                            <Text style = {pageStyle.text}>{date2string(listing[0].created_at)}</Text>
+                            <Text style = {pageStyle.secondaryText}>{date2string(listing[0].created_at) + " in " + subCategories.find((subc) => subc.id == listing[0].category).name}</Text>
+                            
                         </View>
                         <View style = {pageStyle.likeButton}>
                             <ListingLikeButton isLiked={isLiked ? true : false} onLikePress={(nextIsLiked)=>  toggleFavorite(listing[0].id, nextIsLiked)}/>
                         </View>
                     </View>
-                    <UserCard userid={String(listing[0].user_id)}/>
+                    <View style ={pageStyle.userContainer}>
+                        <Text style= {pageStyle.textHeader}>{"Created by: "} </Text>
+                        <UserCard userid={String(listing[0].user_id)}/>
+                    </View>
                     
-                    <Text style= {pageStyle.text}>{listing[0].desc}</Text>
-                    <Text style= {pageStyle.text}>{subCategories.find((subc) => subc.id == listing[0].category).name}</Text>
+                    
+                    <View style= {pageStyle.descContainer}>
+                        <Text style= {pageStyle.textHeader}>{"Description"}</Text>
+                        <Text style= {pageStyle.text}>{listing[0].desc}</Text>
+                    </View>
+                    <View style = {pageStyle.locationContainer}>
+                        <Image style={pageStyle.locationIcon} source={require("../../assets/icons/location.png")}/>
+                        <Text style= {pageStyle.text}>{regionsMap.placeById.get(listing[0].place_id).full_path}</Text>
+                    </View>
                     
                 </ScrollView>
             }

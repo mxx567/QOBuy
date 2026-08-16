@@ -8,8 +8,8 @@ const userCardStyle = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: 5,
-        height: 100,
-        padding: 15,
+        height: 80,
+        padding: 10
     },
     avatar:{
         width:70,
@@ -19,7 +19,8 @@ const userCardStyle = StyleSheet.create({
     userNameText:{
         color: 'white',
         fontSize: 20,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        maxWidth:190
     },
     avatarSkeleton:{
         width:70,
@@ -40,7 +41,8 @@ const userCardStyle = StyleSheet.create({
         gap:10
     },
     userDesc:{
-        color: '#4b4b4b'
+        color: '#4b4b4b',
+        maxWidth:190
     }
 })
 
