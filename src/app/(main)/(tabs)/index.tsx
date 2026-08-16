@@ -86,7 +86,6 @@ export default function IndexScreen(){
         setLikedListingIds(next);
         try {
             // actual process
-            console.log('jopa')
             if (isFavorited) {
                 await likeListing(listingId);
             } else {

@@ -20,8 +20,7 @@ import CommonHeader from "@/src/components/common/CommonHeader";
 const pageStyle = StyleSheet.create({
     mainPage:{
         flex: 1,
-        
-        
+        backgroundColor: '#1B1818',
     },
     screenContainer:{
         alignItems: "center",

@@ -2,7 +2,7 @@ import { useAuthContext } from "@/src/hooks/AuthContext";
 import { useListingDescriptionContext } from "@/src/hooks/ListingDescriptionContext";
 import { uploadedImage } from "@/utils/imgbb";
 import { supabase } from "@/utils/supabase";
-import { useLocalSearchParams, useNavigation } from "expo-router";
+import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView, StyleSheet, View, Text, Image, StatusBar } from "react-native";
 import category from "../categories/[category]";
@@ -12,6 +12,7 @@ import { LikeButton } from "@/src/components/common/LikeButton";
 import { ListingLikeButton } from "@/src/components/common/ListingLikeButton";
 import date2string from "@/utils/date2string";
 import UserCard from "@/src/components/common/UserCard";
+import CommonButton from "@/src/components/common/CommonButton";
 
 const pageStyle = StyleSheet.create({
     mainPage:{
@@ -89,7 +90,8 @@ const pageStyle = StyleSheet.create({
 
 export default function ListingScreen(){
     const params = useLocalSearchParams<{listingid: string}>();
-    
+    const router = useRouter();
+
     const [isLiked, setIsLiked] = useState<boolean>();
 
     const {subCategories, regionsMap} = useListingDescriptionContext();
@@ -181,7 +183,6 @@ export default function ListingScreen(){
                 setExistingImg(fetchedListing[0].pictures.map((img: string) => JSON.parse(img)));
                 setIsLiked(fetchedLikedListings?.includes(Number(params.listingid)));
                 setListing(fetchedListing);
-               
             }
             setIsLoading(false);
             
@@ -244,6 +245,12 @@ export default function ListingScreen(){
                         <Image style={pageStyle.locationIcon} source={require("../../assets/icons/location.png")}/>
                         <Text style= {pageStyle.text}>{regionsMap.placeById.get(listing[0].place_id).full_path}</Text>
                     </View>
+
+                    <CommonButton title = "Chat"onPress={() => {router.push({pathname: "/chats/[chat]", params: { chatData : JSON.stringify({
+                        chatid : "create",
+                        listingid : listing[0].id,
+                        to : listing[0].user_id
+                    }) }})}}/>
                     
                 </ScrollView>
             }
