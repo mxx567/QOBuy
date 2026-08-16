@@ -39,6 +39,7 @@ export default function Carousel({data} : {data : uploadedImage[]}){
             <View style= {CarouselStyle.indexContainer}>
                 <Text style = {CarouselStyle.indexText}>{focusedIndex + "/" + data.length}</Text>
             </View>
+            {data && 
             <FlatList
                 horizontal
                 snapToAlignment="center"
@@ -49,17 +50,20 @@ export default function Carousel({data} : {data : uploadedImage[]}){
                 showsHorizontalScrollIndicator = {false}
                 onViewableItemsChanged={_onViewableItemsChanged}
                 renderItem={({item}) =>{
-                        if(!item.uri){
-                            
-                            return <View></View>
-                        } 
-                        
+                    if (!item?.uri) {
+                        return (
+                            <Image
+                            source={{ uri: "https://i.ibb.co.com/9mGCjPYY/notfound.png" }}
+                            style={{ width: screenWidth, height: 300 }}
+                            />
+                        );
+                    }
                     return(
                         <Image source={{uri: item.uri}} style={{width: screenWidth, height:300}}/>
                     )
                 }}>
 
-            </FlatList>
+            </FlatList>}
         </View>
     )
 }

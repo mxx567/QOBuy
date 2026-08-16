@@ -65,7 +65,7 @@ export default function MyListingScreen(){
                         onPress={() => {router.push({pathname: '/edit', params: {listingid: listing.id}})}}
                         key={listing.id} 
                         name={listing.name.toString()}
-                        image={JSON.parse(listing.pictures[0]).uri}
+                        image={listing.pictures.length == 0 ? undefined : JSON.parse(listing.pictures[0]).uri}
                         price={listing.price.toString()}
                         isLiked={false}
                         category={subCategories.find((subc) => subc.id == listing.category).name}

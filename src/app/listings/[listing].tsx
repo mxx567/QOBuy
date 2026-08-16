@@ -11,6 +11,7 @@ import CommonHeader from "@/src/components/common/CommonHeader";
 import { LikeButton } from "@/src/components/common/LikeButton";
 import { ListingLikeButton } from "@/src/components/common/ListingLikeButton";
 import date2string from "@/utils/date2string";
+import UserCard from "@/src/components/common/UserCard";
 
 const pageStyle = StyleSheet.create({
     mainPage:{
@@ -33,7 +34,8 @@ const pageStyle = StyleSheet.create({
     nameText:{
         fontSize: 24,
         fontWeight: 'bold',
-        color: 'white'
+        color: 'white',
+        maxWidth:290
     },
     priceText:{
         fontSize: 32,
@@ -153,10 +155,10 @@ export default function ListingScreen(){
                 setExistingImg(fetchedListing[0].pictures.map((img: string) => JSON.parse(img)));
                 setIsLiked(fetchedLikedListings?.includes(Number(params.listingid)));
                 setListing(fetchedListing);
+               
             }
             setIsLoading(false);
             
-            console.log(isLiked);
         };
         
         loadData();
@@ -189,7 +191,7 @@ export default function ListingScreen(){
             {listing && 
                 
                 <ScrollView>
-                    {existingImg && <Carousel data={existingImg}/>}
+                    {existingImg && <Carousel data={existingImg?.length > 0 ? existingImg : [{uri: "https://i.ibb.co.com/9mGCjPYY/notfound.png", delete: ""}]}/>}
                     <View style = {pageStyle.namePriceContainer}>
                         <View>
                             
@@ -201,6 +203,7 @@ export default function ListingScreen(){
                             <ListingLikeButton isLiked={isLiked ? true : false} onLikePress={(nextIsLiked)=>  toggleFavorite(listing[0].id, nextIsLiked)}/>
                         </View>
                     </View>
+                    <UserCard userid={String(listing[0].user_id)}/>
                     
                     <Text style= {pageStyle.text}>{listing[0].desc}</Text>
                     <Text style= {pageStyle.text}>{subCategories.find((subc) => subc.id == listing[0].category).name}</Text>

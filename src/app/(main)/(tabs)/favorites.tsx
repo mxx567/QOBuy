@@ -160,7 +160,7 @@ export default function FavoritesScreen(){
                             onPress={() => {}}
                             key={listing.id} 
                             name={listing.name.toString()}
-                            image={JSON.parse(listing.pictures[0]).uri}
+                            image={listing.pictures.length == 0 ? undefined : JSON.parse(listing.pictures[0]).uri}
                             price={listing.price.toString()}
                             isLiked={isLiked}
                             category={subCategories.find((subc) => subc.id == listing.category).name}
