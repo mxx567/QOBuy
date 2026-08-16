@@ -6,13 +6,11 @@ import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { View,Text, ActivityIndicator } from "react-native";
 
-export interface ChatData{
-    chatid : string,
-    to : string,
-    listingid: number
+interface Message{
+    user_id : string,
+    message : string,
+    chat_id : string
 }
-
-
 
 export default function ChatScreen(){
 
@@ -76,11 +74,11 @@ export default function ChatScreen(){
     }
 
 
-    async function sendMessageToDB(message: string) {
+    async function sendMessageToDB(message: Message) {
         const {data, error} = await supabase.from("messages").insert({
-            user_id : profile?.id,
-            message : message,
-            chat_id: chatInfo?.chatid
+            user_id : message.user_id,
+            message : message.message,
+            chat_id: message.chat_id
         })
         if(error){
             throw error.message;
@@ -92,9 +90,16 @@ export default function ChatScreen(){
         if(!userId) return;
 
         const prev = messages;
-        setMessages([...(messages ?? []), message])
+        
+        const nmessage: Message = {
+            user_id: userId,
+            message: message,
+            chat_id: chatInfo?.chatid
+        }
+
+        setMessages([...(messages ?? []), nmessage])
         try{
-            await sendMessageToDB(message);
+            await sendMessageToDB(nmessage);
         }
         catch(error){
             setMessages(prev);
@@ -151,7 +156,7 @@ export default function ChatScreen(){
     return(
         <View>
             {messages?.map((message) =>(
-                <Text key = {message.id }>{message.user_id + ": " + message.message}</Text>
+                <Text key = {messages.indexOf(message)}>{message.user_id + ": " + message.message}</Text>
             ))}
             <InputLine placeholder="Type a message..." value={tmessage} onChangeText={setTMessage} placeholderTextColor="#555"/>
             <CommonButton title="send" onPress={() => sendMessage(tmessage)} />
