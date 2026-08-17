@@ -4,7 +4,7 @@ import { useAuthContext } from "@/src/hooks/AuthContext";
 import { supabase } from "@/utils/supabase";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { View,Text, ActivityIndicator } from "react-native";
+import { View,Text, ActivityIndicator, ScrollView } from "react-native";
 
 interface Message{
     user_id : string,
@@ -23,6 +23,7 @@ export default function ChatScreen(){
     const userId = profile?.id;
 
     const [isLoading, setIsLoading] = useState<boolean>();
+    const [isCreatingChat, setIsCreatingChat] = useState<boolean>(false);
 
     const [ messages, setMessages ] = useState<any[]>();
     const [ tmessage, setTMessage ] = useState("");
@@ -91,15 +92,34 @@ export default function ChatScreen(){
 
         const prev = messages;
         
+        let currentChatId = chatInfo?.chatid;
+        if (currentChatId === "create") {
+            // Prevent duplicate chat creation
+            if (isCreatingChat) return;
+            
+            setIsCreatingChat(true);
+            const chatd = await CreateChat(chatInfo.listingid, chatInfo.to);
+            setIsCreatingChat(false);
+            
+            if (!chatd) {
+                console.log("Failed to create chat before sending message");
+                return;
+            }
+            currentChatId = chatd.id;
+            const updated = { ...chatInfo, chatid: chatd.id };
+            setChatInfo(updated);
+        }
+        
         const nmessage: Message = {
             user_id: userId,
             message: message,
-            chat_id: chatInfo?.chatid
+            chat_id: currentChatId
         }
 
         setMessages([...(messages ?? []), nmessage])
         try{
             await sendMessageToDB(nmessage);
+            setTMessage("");
         }
         catch(error){
             setMessages(prev);
@@ -117,19 +137,11 @@ export default function ChatScreen(){
         }
         const loadData = async () => {
             setIsLoading(true);
-            if (chatInfo?.chatid === "create") {
-                const chatd = await CreateChat(chatInfo.listingid, chatInfo.to);
 
-                if (!chatd) {
-                    setIsLoading(false);
-                    return;
-                }
-
-                const updated = { ...chatInfo, chatid: chatd.id };
-                setChatInfo(updated);
-            }         
+            if (chatInfo?.chatid && chatInfo?.chatid !== "create") {
+                await getAllMessages(chatInfo.chatid);
+            }
             setIsLoading(false);       
-            
         };
             
         loadData();
@@ -155,11 +167,14 @@ export default function ChatScreen(){
 
     return(
         <View>
-            {messages?.map((message) =>(
-                <Text key = {messages.indexOf(message)}>{message.user_id + ": " + message.message}</Text>
-            ))}
+            <ScrollView>
+                {messages?.map((message) =>(
+                    <Text key = {messages.indexOf(message)}>{message.user_id + ": " + message.message}</Text>
+                ))}
+            </ScrollView>
+            
             <InputLine placeholder="Type a message..." value={tmessage} onChangeText={setTMessage} placeholderTextColor="#555"/>
-            <CommonButton title="send" onPress={() => sendMessage(tmessage)} />
+            <CommonButton title="send" onPress={() => sendMessage(tmessage)} disabled={isCreatingChat} />
         </View>
     );
 }

@@ -2,6 +2,7 @@ import { ImageSourcePropType, Image , Pressable, StyleSheet, Text } from "react-
 
 interface CommonButtonProps {
     title: string;
+    disabled: boolean;
     onPress: () => void;
     isNext?: boolean;
     withIcon?: boolean;
@@ -34,9 +35,9 @@ const CommonButtonStyle = StyleSheet.create({
 });
 
 
-export default function CommonButton({title, onPress, isNext = false, withIcon = false, icon = require("../../assets/images/default/notfound.png")}: CommonButtonProps) {
+export default function CommonButton({title, disabled , onPress, isNext = false, withIcon = false, icon = require("../../assets/images/default/notfound.png")}: CommonButtonProps) {
     return (
-        <Pressable style={CommonButtonStyle.button} onPress={onPress}>
+        <Pressable style={CommonButtonStyle.button} onPress={onPress} disabled={disabled}>
             {withIcon && <Image source={icon} style={CommonButtonStyle.image} />}
             <Text style={CommonButtonStyle.text}>{title}</Text>
             {isNext && <Image source={require("../../assets/icons/forward.png")} style={CommonButtonStyle.image} />}
