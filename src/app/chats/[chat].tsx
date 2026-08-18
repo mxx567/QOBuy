@@ -38,9 +38,11 @@ const pageStyle = StyleSheet.create({
 
 export default function ChatScreen(){
 
-    const params  = useLocalSearchParams<{chatData : string}>();
+    const params  = useLocalSearchParams<{
+        chat: string,
+    }>();
 
-    const chatData = params.chatData ? JSON.parse(params.chatData as string) : null;
+    const chatData = params.chat ? JSON.parse(params.chat as string) : null;
 
     const { profile, isLoading: isAuthLoading } = useAuthContext();
 
@@ -72,17 +74,20 @@ export default function ChatScreen(){
 
 
     async function getChatParticipants(chatid:string) {
-        const {data, error} = await supabase.from("chat_participants").select("*").eq("chat_id", chatid);
+        const {data, error} = await supabase.from("chat_participants").select("user_id, profiles(avatar_url, username)").eq("chat_id", chatid);
         if(error){
             console.log("Cant get chat participants ", error.message);
             return;
         }
         if(data){
             setChatParticipants(data.map((user) => { 
+                const profile = Array.isArray(user.profiles)
+                    ? user.profiles[0]
+                    : user.profiles;
                 return ({
                     user_id : user.user_id,
-                    avatar_url : user.avatar_url,
-                    username: user.username
+                    avatar_url : profile?.avatar_url,
+                    username: profile?.username
                 })
              }));
         }   
@@ -149,7 +154,7 @@ export default function ChatScreen(){
 
         const prev = messages;
         
-        let currentChatId = chatInfo?.chatid;
+        let currentChatId = chatInfo.chatid;
         if (currentChatId === "create") {
             // Prevent duplicate chat creation
             if (isCreatingChat) return;
@@ -240,7 +245,7 @@ export default function ChatScreen(){
     return(
         <View style ={pageStyle.mainContainer}>
             <StatusBar />
-            <ChatHeader listingname={listingName} userNames={chatParticipants?.find((user) => user.user_id != profile?.id). + ", You"}/>
+            <ChatHeader listingname={listingName} userNames={(chatParticipants?.map((cp) => {return(cp.user_id != userId ? cp.username  : "You")}).join(", ")) ?? ''}/>
             <ScrollView>
                 {messages?.map((message) =>(
                     <Message key = {messages.indexOf(message)} value={message.message}/>

@@ -158,7 +158,7 @@ export default function IndexScreen(){
                 const isLiked = likedListingIds.includes(listing.id);
                 return(
                     <ListingCard 
-                        onPress={() => {router.push({pathname: "/listings/[listing]", params: {listingid : listing.id}})}}
+                        onPress={() => {router.push({pathname: "/listings/[listing]", params: {listing: listing.id}})}}
                         key={listing.id} 
                         name={listing.name.toString()}
                         image={listing.pictures.length == 0 ? undefined : JSON.parse(listing.pictures[0]).uri}

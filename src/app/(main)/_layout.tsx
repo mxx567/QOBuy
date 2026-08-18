@@ -35,7 +35,7 @@ export default function Layout() {
                     <TabBarButton text="Favorites" image={require('../../assets/icons/favfilled.png')} />
                 </TabTrigger>
                 <TabBarButton text="Add" image={require('../../assets/icons/add.png')} onPress={() => {router.push({pathname: '/add', params: {selectedSubCategory: ''}})}} />
-                <TabTrigger name="chats" href="/chats" asChild>
+                <TabTrigger name="messages" href="/messages" asChild>
                     <TabBarButton text="Chats" image={require('../../assets/icons/messages.png')} />
                 </TabTrigger>
                 <TabTrigger name="myprofile" href="/myprofile" asChild>

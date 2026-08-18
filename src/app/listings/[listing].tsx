@@ -89,7 +89,7 @@ const pageStyle = StyleSheet.create({
 
 
 export default function ListingScreen(){
-    const params = useLocalSearchParams<{listingid: string}>();
+    const params = useLocalSearchParams<{listing: string}>();
     const router = useRouter();
 
     const [isLiked, setIsLiked] = useState<boolean>();
@@ -156,7 +156,7 @@ export default function ListingScreen(){
     }
     
     const getListing = async () => {
-        const { data, error } = await supabase.from("Listings").select("*").eq("id", params.listingid);
+        const { data, error } = await supabase.from("Listings").select("*").eq("id", params.listing);
         if (error) {
             console.error("Error fetching listing:", error.message);
             return;
@@ -181,7 +181,7 @@ export default function ListingScreen(){
             const fetchedListing = await getListing();
             if(fetchedListing){
                 setExistingImg(fetchedListing[0].pictures.map((img: string) => JSON.parse(img)));
-                setIsLiked(fetchedLikedListings?.includes(Number(params.listingid)));
+                setIsLiked(fetchedLikedListings?.includes(Number(params.listing)));
                 setListing(fetchedListing);
             }
             setIsLoading(false);
@@ -246,9 +246,10 @@ export default function ListingScreen(){
                         <Text style= {pageStyle.text}>{regionsMap.placeById.get(listing[0].place_id).full_path}</Text>
                     </View>
 
-                    <CommonButton title = "Chat"onPress={() => {router.push({pathname: "/chats/[chat]", params: { chatData : JSON.stringify({
+                    <CommonButton title = "Chat"onPress={() => {router.push({pathname: "/chats/[chat]", params: { chat : JSON.stringify({
                         chatid : "create",
                         listingid : listing[0].id,
+                        listing_name: listing[0].name,
                         to : listing[0].user_id
                     }) }})}}/>
                     
