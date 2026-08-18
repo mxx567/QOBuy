@@ -180,8 +180,7 @@ export default function FavoritesScreen(){
                         title={chat.last_message_listing} 
                         last_msg={(chat.last_message_user == profile?.username ? "You: " : chat.last_message_user + ": ") + chat.last_message} 
                         onPress={ () => {router.push({pathname: "/chats/[chat]", params: {
-                            chat: chat.id,
-                            chatData: JSON.stringify({
+                            chat: JSON.stringify({
                                 chatid : chat.id,
                                 listingid : chat.listing_id,
                                 listing_name: chat.last_message_listing,

@@ -203,12 +203,11 @@ export default function ChatScreen(){
             if(chatInfo.chatid === "create"){
                 const user = await getUserdata(chatInfo.to);
 
-                const to: ChatParticipant = {
-                    user_id: user?.id,
-                    avatar_url: user?.avatar_url,
-                    username: user?.username
-                }
-                setChatParticipants([to, profile])
+                setChatParticipants([user,{
+                    user_id: profile.id,
+                    avatar_url: profile.avatar_url,
+                    username: profile.username
+                }])
             }
 
             setListingName(chatInfo?.listing_name);
@@ -221,9 +220,7 @@ export default function ChatScreen(){
             setIsLoading(false);       
         };
             
-        loadData();
-            
-            
+        loadData();    
     }, [userId, isAuthLoading, chatInfo?.chatid]);
 
     if (isAuthLoading || isLoading) {
