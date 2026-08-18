@@ -2,7 +2,7 @@ import { ImageSourcePropType, Image , Pressable, StyleSheet, Text } from "react-
 
 interface CommonButtonProps {
     title: string;
-    disabled: boolean;
+    disabled?: boolean;
     onPress: () => void;
     isNext?: boolean;
     withIcon?: boolean;

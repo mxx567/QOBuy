@@ -9,7 +9,7 @@ interface TabBarButtonDesc {
 
 const TabBarButtonStyle = StyleSheet.create({
     button:{
-        width: 80,
+        width: 70,
         height: 60,
         borderRadius: 20,
         alignItems: 'center',
@@ -18,7 +18,7 @@ const TabBarButtonStyle = StyleSheet.create({
         marginBottom: 5,
     },
     buttonPressed:{
-        width: 80,
+        width: 70,
         height: 60,
         borderRadius: 20,
         alignItems: 'center',

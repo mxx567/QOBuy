@@ -1,16 +1,40 @@
+import ChatHeader from "@/src/components/chat/ChatHeader";
+import Message from "@/src/components/chat/Message";
+import MessageInputLine from "@/src/components/chat/MessageInputLine";
+import MessageSendButton from "@/src/components/chat/MessageSendButton";
 import CommonButton from "@/src/components/common/CommonButton";
 import InputLine from "@/src/components/common/InputLine";
 import { useAuthContext } from "@/src/hooks/AuthContext";
 import { supabase } from "@/utils/supabase";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { View,Text, ActivityIndicator, ScrollView } from "react-native";
+import { View,Text, ActivityIndicator, ScrollView, StyleSheet, StatusBar } from "react-native";
 
 interface Message{
     user_id : string,
     message : string,
     chat_id : string
 }
+
+interface ChatParticipant{
+    user_id : string;
+    avatar_url : string | null;
+    username: string;
+}
+
+const pageStyle = StyleSheet.create({
+    mainContainer:{
+        flex: 1,
+        backgroundColor: '#1B1818',
+    },
+    messageSendBar:{
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 5,
+        padding: 10,
+        flexDirection:'row'
+    }
+})
 
 export default function ChatScreen(){
 
@@ -28,8 +52,42 @@ export default function ChatScreen(){
     const [ messages, setMessages ] = useState<any[]>();
     const [ tmessage, setTMessage ] = useState("");
 
+    const [listingName, setListingName] = useState('');
+
+    const [chatParticipants, setChatParticipants] = useState<any[]>();
+
     const [chatInfo, setChatInfo] = useState<any>(chatData);
 
+
+    async function getUserdata(id:string) {
+        const {data, error} = await supabase.from("profiles").select("*").eq("id", id);
+        if(error){
+            console.log("Error fetching user: ", error.message);
+        }
+        if(data){
+            return data[0];
+        }
+        return null;
+    }
+
+
+    async function getChatParticipants(chatid:string) {
+        const {data, error} = await supabase.from("chat_participants").select("*").eq("chat_id", chatid);
+        if(error){
+            console.log("Cant get chat participants ", error.message);
+            return;
+        }
+        if(data){
+            setChatParticipants(data.map((user) => { 
+                return ({
+                    user_id : user.user_id,
+                    avatar_url : user.avatar_url,
+                    username: user.username
+                })
+             }));
+        }   
+        return;
+    }
 
     async function CreateChat(listingid: number, to: string) {
         const { data : chatData, error: chatError} = await supabase.from('chats').insert({
@@ -70,7 +128,6 @@ export default function ChatScreen(){
         }
         if(data){
             setMessages(data);
-
         }
     }
 
@@ -137,9 +194,24 @@ export default function ChatScreen(){
         }
         const loadData = async () => {
             setIsLoading(true);
+            
+            if(chatInfo.chatid === "create"){
+                const user = await getUserdata(chatInfo.to);
 
+                const to: ChatParticipant = {
+                    user_id: user?.id,
+                    avatar_url: user?.avatar_url,
+                    username: user?.username
+                }
+                setChatParticipants([to, profile])
+            }
+
+            setListingName(chatInfo?.listing_name);
+            
+            
             if (chatInfo?.chatid && chatInfo?.chatid !== "create") {
                 await getAllMessages(chatInfo.chatid);
+                await getChatParticipants(chatInfo.chatid);
             }
             setIsLoading(false);       
         };
@@ -166,15 +238,19 @@ export default function ChatScreen(){
     }
 
     return(
-        <View>
+        <View style ={pageStyle.mainContainer}>
+            <StatusBar />
+            <ChatHeader listingname={listingName} userNames={chatParticipants?.find((user) => user.user_id != profile?.id). + ", You"}/>
             <ScrollView>
                 {messages?.map((message) =>(
-                    <Text key = {messages.indexOf(message)}>{message.user_id + ": " + message.message}</Text>
+                    <Message key = {messages.indexOf(message)} value={message.message}/>
                 ))}
             </ScrollView>
+            <View style = {pageStyle.messageSendBar}>
+                <MessageInputLine placeholder="Type a message..." value={tmessage} onChangeText={setTMessage} placeholderTextColor="#555"/>
+                <MessageSendButton title="send" onPress={() => sendMessage(tmessage)} disabled={isCreatingChat} />
+            </View>
             
-            <InputLine placeholder="Type a message..." value={tmessage} onChangeText={setTMessage} placeholderTextColor="#555"/>
-            <CommonButton title="send" onPress={() => sendMessage(tmessage)} disabled={isCreatingChat} />
         </View>
     );
 }
