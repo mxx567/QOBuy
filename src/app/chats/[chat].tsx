@@ -65,6 +65,7 @@ export default function ChatScreen(){
 
     const [isLoading, setIsLoading] = useState<boolean>();
     const [isCreatingChat, setIsCreatingChat] = useState<boolean>(false);
+    const [isSendingMessage, setIsSendingMessage] = useState<boolean>(false)
 
     const [ messages, setMessages ] = useState<any[]>();
     const [ tmessage, setTMessage ] = useState("");
@@ -181,6 +182,7 @@ export default function ChatScreen(){
     }
 
     async function sendMessage(message:string) {
+        setIsSendingMessage(true);
         if(!userId) return;
 
         const prev = messages;
@@ -219,6 +221,7 @@ export default function ChatScreen(){
             setMessages(prev);
             console.log(error);
         }
+        setIsSendingMessage(false);
     }
 
 
@@ -291,7 +294,7 @@ export default function ChatScreen(){
             </ScrollView>
             <View style = {pageStyle.messageSendBar}>
                 <MessageInputLine placeholder="Type a message..." value={tmessage} onChangeText={setTMessage} placeholderTextColor="#555"/>
-                <MessageSendButton title="send" onPress={() => {if(tmessage.length != 0) sendMessage(tmessage)}} disabled={isCreatingChat} />
+                <MessageSendButton title="send" onPress={() => {if(tmessage.length != 0) sendMessage(tmessage)}} disabled={isCreatingChat || isSendingMessage} />
             </View>
             
         </View>
