@@ -5,15 +5,17 @@ import MessageSendButton from "@/src/components/chat/MessageSendButton";
 import CommonButton from "@/src/components/common/CommonButton";
 import InputLine from "@/src/components/common/InputLine";
 import { useAuthContext } from "@/src/hooks/AuthContext";
+import date2string from "@/utils/date2string";
 import { supabase } from "@/utils/supabase";
 import { useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
-import { View,Text, ActivityIndicator, ScrollView, StyleSheet, StatusBar } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { View,Text, ActivityIndicator, ScrollView, StyleSheet, StatusBar, FlatList } from "react-native";
 
 interface Message{
     user_id : string,
     message : string,
-    chat_id : string
+    chat_id : string,
+    created_at: Date
 }
 
 interface ChatParticipant{
@@ -33,10 +35,23 @@ const pageStyle = StyleSheet.create({
         gap: 5,
         padding: 10,
         flexDirection:'row'
+    },
+    messagesContainer:{
+        padding: 10,
+        gap: 5
+    },
+    messageSendByUser:{
+        marginLeft:"auto",
+
+    },
+    messageSendByOtherUser:{
+        marginRight:"auto"
     }
 })
 
 export default function ChatScreen(){
+
+    
 
     const params  = useLocalSearchParams<{
         chat: string,
@@ -60,6 +75,22 @@ export default function ChatScreen(){
 
     const [chatInfo, setChatInfo] = useState<any>(chatData);
 
+    const scrollViewRef = useRef<ScrollView>(null);
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            scrollViewRef.current?.scrollToEnd({ animated: true });
+        }, 50);
+
+        return () => clearTimeout(timeout);
+    }, [messages]);
+
+    const chatParticipantsMap = new Map(
+        (chatParticipants ?? []).map((participant) => [
+            participant.user_id,
+            participant,
+        ])
+    );
 
     async function getUserdata(id:string) {
         const {data, error} = await supabase.from("profiles").select("*").eq("id", id);
@@ -175,7 +206,8 @@ export default function ChatScreen(){
         const nmessage: Message = {
             user_id: userId,
             message: message,
-            chat_id: currentChatId
+            chat_id: currentChatId,
+            created_at: new Date()
         }
 
         setMessages([...(messages ?? []), nmessage])
@@ -207,7 +239,7 @@ export default function ChatScreen(){
                     user_id: profile.id,
                     avatar_url: profile.avatar_url,
                     username: profile.username
-                }])
+                }]);
             }
 
             setListingName(chatInfo?.listing_name);
@@ -220,7 +252,7 @@ export default function ChatScreen(){
             setIsLoading(false);       
         };
             
-        loadData();    
+        loadData();     
     }, [userId, isAuthLoading, chatInfo?.chatid]);
 
     if (isAuthLoading || isLoading) {
@@ -243,14 +275,23 @@ export default function ChatScreen(){
         <View style ={pageStyle.mainContainer}>
             <StatusBar />
             <ChatHeader listingname={listingName} userNames={(chatParticipants?.map((cp) => {return(cp.user_id != userId ? cp.username  : "You")}).join(", ")) ?? ''}/>
-            <ScrollView>
+            <ScrollView 
+            ref={scrollViewRef}
+            onContentSizeChange={() =>
+                scrollViewRef.current?.scrollToEnd({ animated: false })
+            }
+
+            contentContainerStyle={pageStyle.messagesContainer}>
                 {messages?.map((message) =>(
-                    <Message key = {messages.indexOf(message)} value={message.message}/>
+                    <View style={message.user_id === userId ? pageStyle.messageSendByUser : pageStyle.messageSendByOtherUser} key={messages.indexOf(message)}>
+                        <Message value={message.message} desc={date2string(message.created_at) + " by " + chatParticipantsMap.get(message.user_id)?.username} msgbyuser={message.user_id === userId}/>
+                    </View>
                 ))}
+                
             </ScrollView>
             <View style = {pageStyle.messageSendBar}>
                 <MessageInputLine placeholder="Type a message..." value={tmessage} onChangeText={setTMessage} placeholderTextColor="#555"/>
-                <MessageSendButton title="send" onPress={() => sendMessage(tmessage)} disabled={isCreatingChat} />
+                <MessageSendButton title="send" onPress={() => {if(tmessage.length != 0) sendMessage(tmessage)}} disabled={isCreatingChat} />
             </View>
             
         </View>
