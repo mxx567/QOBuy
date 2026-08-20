@@ -5,10 +5,11 @@ import { View, Text, StyleSheet } from "react-native";
 interface MessageProps {
     value: string,
     desc: string,
-    msgbyuser: boolean
+    msgbyuser: boolean,
+    showDescription?: boolean
 }
 
-export default function InputLine({value,desc, msgbyuser}: MessageProps) {
+export default function InputLine({value,desc, msgbyuser, showDescription}: MessageProps) {
     const messageStyle = StyleSheet.create({
         messageContainer: {
             alignSelf: msgbyuser ? 'flex-end' : 'flex-start',
@@ -35,7 +36,7 @@ export default function InputLine({value,desc, msgbyuser}: MessageProps) {
             <View style = {messageStyle.messageContainer}>
                 <Text style = {messageStyle.text}>{value}</Text>
             </View>
-            <Text style = {messageStyle.descMsg}>{desc}</Text>
+            {showDescription && <Text style={messageStyle.descMsg}>{desc}</Text>}
         </View>
        
     );

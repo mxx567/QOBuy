@@ -23,7 +23,7 @@ const pageStyle = StyleSheet.create({
 
 export default function CategoriesScreen() {
     const router = useRouter();
-    const {categories, isSearchMode, setSelectedCategory} = useListingDescriptionContext();
+    const {categories, isSearchMode, setSelectedCategory, setSelectedSubCategoryId} = useListingDescriptionContext();
     return (
         <View style={pageStyle.mainContainer}>
             <CommonHeader headerText="Categories" />
@@ -40,7 +40,8 @@ export default function CategoriesScreen() {
                         title={"None"}
                         isNext
                         onPress={() => {
-                            setSelectedCategory(0)
+                            setSelectedCategory(0);
+                            setSelectedSubCategoryId(0);
                             router.dismissTo('/search')
                         }}
                     />

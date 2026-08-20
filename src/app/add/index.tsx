@@ -98,7 +98,7 @@ export default function AddScreen(){
         setIsEditMode(false);
         setSelectedCategory(0);
         setSelectedRegion(0);
-        setSelectedSubCategoryId(0)
+        setSelectedSubCategoryId(0);
     }, [])
 
     useEffect(()=>{

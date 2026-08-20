@@ -216,7 +216,7 @@ export default function ChatScreen(){
             created_at: new Date()
         }
 
-        setMessages([...(messages ?? []), nmessage])
+        setMessages((currentMessages) => [...(currentMessages ?? []), nmessage]);
         try{
             await sendMessageToDB(nmessage);
             setTMessage("");
@@ -262,6 +262,57 @@ export default function ChatScreen(){
         loadData();     
     }, [userId, isAuthLoading, chatInfo?.chatid]);
 
+    useEffect(() => {
+        const chatId = chatInfo?.chatid;
+        if (isAuthLoading || !userId || !chatId || chatId === "create") {
+            return;
+        }
+
+        const channel = supabase
+            .channel(`messages:${chatId}`)
+            .on(
+                "postgres_changes",
+                {
+                    event: "INSERT",
+                    schema: "public",
+                    table: "messages",
+                    filter: `chat_id=eq.${chatId}`,
+                },
+                (payload) => {
+                    const incomingMessage = payload.new as Message & { id?: string | number };
+
+                    setMessages((currentMessages) => {
+                        const existingMessages = currentMessages ?? [];
+                        const alreadyAdded = existingMessages.some((existingMessage) => {
+                            if (incomingMessage.id && existingMessage.id === incomingMessage.id) {
+                                return true;
+                            }
+
+                            if (
+                                existingMessage.user_id !== incomingMessage.user_id ||
+                                existingMessage.message !== incomingMessage.message
+                            ) {
+                                return false;
+                            }
+
+                            const existingTime = new Date(existingMessage.created_at).getTime();
+                            const incomingTime = new Date(incomingMessage.created_at).getTime();
+                            return Math.abs(existingTime - incomingTime) < 5000;
+                        });
+
+                        return alreadyAdded
+                            ? existingMessages
+                            : [...existingMessages, incomingMessage];
+                    });
+                }
+            )
+            .subscribe();
+
+        return () => {
+            void supabase.removeChannel(channel);
+        };
+    }, [chatInfo?.chatid, isAuthLoading, userId]);
+
     if (isAuthLoading || isLoading) {
         return (
             <View style={pageStyle.loadingContainer}>
@@ -278,23 +329,47 @@ export default function ChatScreen(){
         );    
     }
 
+    
+
+
     return(
         <View style ={pageStyle.mainContainer}>
             <StatusBar />
             <ChatHeader listingname={listingName} userNames={(chatParticipants?.map((cp) => {return(cp.user_id != userId ? cp.username  : "You")}).join(", ")) ?? ''}/>
             <ScrollView 
-            ref={scrollViewRef}
-            onContentSizeChange={() =>
-                scrollViewRef.current?.scrollToEnd({ animated: false })
-            }
+                ref={scrollViewRef}
+                onContentSizeChange={() =>
+                    scrollViewRef.current?.scrollToEnd({ animated: false })
+                }
 
-            contentContainerStyle={pageStyle.messagesContainer}>
-                {messages?.map((message) =>(
-                    <View style={message.user_id === userId ? pageStyle.messageSendByUser : pageStyle.messageSendByOtherUser} key={messages.indexOf(message)}>
-                        <Message value={message.message} desc={date2string(message.created_at) + " by " + chatParticipantsMap.get(message.user_id)?.username} msgbyuser={message.user_id === userId}/>
-                    </View>
-                ))}
-                
+                contentContainerStyle={pageStyle.messagesContainer}>
+                {messages?.map((message, index) => {
+                    const nextMessage = messages[index + 1];
+                    const showDescription =
+                        !nextMessage || nextMessage.user_id !== message.user_id;
+                    console.log(showDescription)
+                    return (
+                        <View
+                            style={
+                                message.user_id === userId
+                                    ? pageStyle.messageSendByUser
+                                    : pageStyle.messageSendByOtherUser
+                            }
+                            key={message.id ?? `${message.created_at}-${index}`}
+                        >
+                            <Message
+                                value={message.message}
+                                desc={
+                                    date2string(message.created_at) +
+                                    " by " +
+                                    chatParticipantsMap.get(message.user_id)?.username
+                                }
+                                msgbyuser={message.user_id === userId}
+                                showDescription={showDescription}
+                            />
+                        </View>
+                    );
+                })}
             </ScrollView>
             <View style = {pageStyle.messageSendBar}>
                 <MessageInputLine placeholder="Type a message..." value={tmessage} onChangeText={setTMessage} placeholderTextColor="#555"/>
