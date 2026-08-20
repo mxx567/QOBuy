@@ -3,6 +3,7 @@ import SearchBar from "@/src/components/common/SearchBar";
 import date2string from "@/utils/date2string";
 import { supabase } from "@/utils/supabase";
 import { useListingDescriptionContext } from "@/src/hooks/ListingDescriptionContext";
+import { useFavorites } from "@/src/hooks/useFavorites";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, View, StyleSheet, Text } from "react-native";
@@ -66,6 +67,7 @@ export default function IndexScreen(){
     const pageSize = 10;
 
     const { selectedSubCategoryId, selectedCategory, subCategories, regionsMap, selectedRegion } = useListingDescriptionContext();
+    const { likedListingIds, toggleFavorite } = useFavorites();
 
     useEffect(() => {
         setPage(0);
@@ -141,10 +143,11 @@ export default function IndexScreen(){
                         name={listing.name}
                         image={listing.pictures?.length ? JSON.parse(listing.pictures[0]).uri : undefined}
                         price={String(listing.price)}
+                        isLiked={likedListingIds.includes(listing.id)}
                         category={subCategories.find((subCategory) => subCategory.id == listing.category)?.name}
                         publishDate={date2string(listing.created_at)}
                         onPress={() => router.push({ pathname: '/listings/[listing]', params: { listing: String(listing.id) } })}
-                        onLikePress={() => {}}
+                        onLikePress={(nextIsLiked) => toggleFavorite(listing.id, nextIsLiked)}
                     />
                 ))}
                 {!isLoading && totalPages > 0 && (
