@@ -1,10 +1,9 @@
-import { View, Text, ScrollView, ActivityIndicator } from "react-native";
+import { View, Text, ActivityIndicator, FlatList } from "react-native";
 import { StyleSheet } from "react-native";
 import { ListingCard } from "../../../components/common/ListingCard";
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase";
 import date2string from "@/utils/date2string";
-import { uploadedImage } from "@/utils/imgbb";
 
 import { useNavigation, useRouter } from "expo-router";
 import { useListingDescriptionContext } from "@/src/hooks/ListingDescriptionContext";
@@ -34,7 +33,7 @@ const pageStyle = StyleSheet.create({
 export default function IndexScreen(){
     const [listings, setListings] = useState<any[]>([]);
 
-    const {categories, subCategories} = useListingDescriptionContext();
+    const {subCategories} = useListingDescriptionContext();
 
     const [likedListingIds, setLikedListingIds] = useState<number[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -102,7 +101,11 @@ export default function IndexScreen(){
 
     
     const getListings = async () => {
-        const { data, error } = await supabase.from("Listings").select("*").limit(30);
+        const { data, error } = await supabase
+            .from("Listings")
+            .select("id, name, pictures, price, category, created_at")
+            .order("created_at", { ascending: false })
+            .limit(30);
         if (error) {
             console.error("Error fetching listings:", error.message);
             return;
@@ -156,8 +159,15 @@ export default function IndexScreen(){
     return (
         <View style={pageStyle.pageContainer}>
             <SearchBar onPress={()=>{router.push('/search')}}/>
-            <ScrollView style={pageStyle.mainPage}>
-                {listings.map((listing: any) => {
+            <FlatList
+                style={pageStyle.mainPage}
+                data={listings}
+                keyExtractor={(listing) => String(listing.id)}
+                initialNumToRender={5}
+                maxToRenderPerBatch={5}
+                windowSize={5}
+                removeClippedSubviews
+                renderItem={({ item: listing }) => {
                     const isLiked = likedListingIds.includes(listing.id);
                     return(
                         <ListingCard 
@@ -167,13 +177,13 @@ export default function IndexScreen(){
                             image={listing.pictures.length == 0 ? undefined : JSON.parse(listing.pictures[0]).uri}
                             price={listing.price.toString()}
                             isLiked={isLiked}
-                            category={subCategories.find((subc) => subc.id == listing.category).name}
+                            category={subCategories.find((subc) => subc.id == listing.category)?.name}
                             onLikePress={(nextIsLiked)=>  toggleFavorite(listing.id, nextIsLiked)}
                             publishDate={date2string(listing.created_at)}
                         />
                     );
-                })}
-            </ScrollView>
+                }}
+            />
         </View>
         
     );

@@ -56,8 +56,11 @@ export default function IndexScreen(){
                 .select("id", { count: "exact", head: true });
 
             if (title.trim()) {
-                query = query.ilike("name", `%${title.trim()}%`).ilike("desc", `%${title.trim()}%`);
+                query = query.or(
+                    `name.ilike.%${title}%,desc.ilike.%${title}%`
+                );;
             }
+        
             
             if (selectedSubCategoryId) {
                 query = query.eq("category", selectedSubCategoryId);
@@ -125,7 +128,7 @@ export default function IndexScreen(){
                     <Text>{"Set Price Range"}</Text>
                 </View>     
                 <RangeLine value1={String(priceFrom)} value2={String(priceTo)} onChangeText1={(from) => setPriceFrom(Number(from))} onChangeText2={(to) => setPriceTo(Number(to))} />
-                <CommonButton title={listingCount === null ? "Search" : `Search (${listingCount})`} onPress={()=>{router.push('/search/searchresults')}} />
+                <CommonButton title={listingCount === null ? "Search" : `Search (${listingCount})`} onPress={()=>{router.push({ pathname: '/search/searchresults', params: { title, priceFrom: String(priceFrom), priceTo: String(priceTo) } })}} />
             </View>
         </View>
         

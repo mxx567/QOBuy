@@ -2,7 +2,7 @@ import { Pressable, View, Image, Text, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 const headerStyle = StyleSheet.create({
     header: {
-        height: 80,
+        height: 60,
         width: '100%',
         flexDirection: "row",
         alignItems: "center",

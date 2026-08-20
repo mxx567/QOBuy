@@ -35,7 +35,7 @@ const ListingStyle = StyleSheet.create({
         color: '#020202',
         fontWeight: 'bold',
         fontSize: 20,
-        maxWidth: 200
+        maxWidth: 150
     },
     price:{
         fontFamily: 'HelveticaNeue-Bold',
