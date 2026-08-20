@@ -12,8 +12,8 @@ interface CommonButtonProps {
 const CommonButtonStyle = StyleSheet.create({
     button: {
         flexDirection: 'row',
-        backgroundColor: '#3E3737',
-        borderRadius: 100,
+        backgroundColor: '#4E4AC9',
+        borderRadius: 10,
         width: 340,
         height: 40,
         justifyContent: 'center',

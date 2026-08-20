@@ -13,16 +13,19 @@ import { useAuthContext } from "@/src/hooks/AuthContext";
 const pageStyle = StyleSheet.create({
     mainPage:{
         flex: 1,
-        backgroundColor: '#1B1818',
-        marginTop: 50,
+        padding: 15
     },
     text:{
-        color: 'white',
+        color: 'black',
         alignSelf: 'center',
+    },
+    textBig:{
+        color: 'black',
+        fontSize: 48,
+        fontWeight: 'bold'
     },
     loadingContainer:{
         flex:1,
-        backgroundColor: '#1B1818',
         alignContent: 'center',
         justifyContent: 'center'
     }
@@ -138,7 +141,7 @@ export default function FavoritesScreen(){
     if (isAuthLoading || isLoading) {
         return (
         <View style={pageStyle.loadingContainer}>
-            <ActivityIndicator size="large" color="#fff" />
+            <ActivityIndicator size="large" color="#4E4AC9" />
         </View>
         );
     }
@@ -152,6 +155,7 @@ export default function FavoritesScreen(){
     }
     return (
         <ScrollView style={pageStyle.mainPage}>
+            <Text style={pageStyle.textBig}>{"Favorites"}</Text>
             {listings.map((listing: any) => {
                 const isLiked = likedListingIds.includes(listing.id);
                 if(isLiked){

@@ -27,7 +27,6 @@ interface ChatParticipant{
 const pageStyle = StyleSheet.create({
     mainContainer:{
         flex: 1,
-        backgroundColor: '#1B1818',
     },
     messageSendBar:{
         alignItems: 'center',
@@ -46,6 +45,11 @@ const pageStyle = StyleSheet.create({
     },
     messageSendByOtherUser:{
         marginRight:"auto"
+    },
+    loadingContainer:{
+        flex:1,
+        alignContent: 'center',
+        justifyContent: 'center'
     }
 })
 
@@ -260,7 +264,7 @@ export default function ChatScreen(){
 
     if (isAuthLoading || isLoading) {
         return (
-            <View >
+            <View style={pageStyle.loadingContainer}>
                 <ActivityIndicator size="large"  />
             </View>
         );
@@ -268,7 +272,7 @@ export default function ChatScreen(){
     
     if (!userId) {
         return (
-            <View >
+            <View style={pageStyle.loadingContainer}>
                 <Text >Please log in to browse listings.</Text>
             </View>
         );    

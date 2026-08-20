@@ -15,13 +15,11 @@ interface InputLineProps {
 export default function MessageInputLine({value, onChangeText, placeholder, placeholderTextColor = "#000000" , secureTextEntry, inputMode = "text", height = 40}: InputLineProps) {
     const inputLineStyle = StyleSheet.create({
     input: {
-        backgroundColor: '#00000000',
-        color: 'white',
-        borderWidth: 2,
-        borderColor: '#555',
+        backgroundColor: '#E0E0E0',
+        color: 'black',
         width: 300,
         
-        borderRadius: 20,
+        borderRadius: 15,
         padding: 10,
         textAlign: 'left',
         textAlignVertical: 'top',

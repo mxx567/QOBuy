@@ -2,22 +2,23 @@ import { Tabs, TabList, TabTrigger, TabSlot } from 'expo-router/ui';
 import { TabBarButton } from "../../components/common/TabBarButton";
 import { StyleSheet} from "react-native";
 import { Link, useRouter } from 'expo-router';
+import { AddButton } from '@/src/components/common/AddButton';
 
 const TabStyle = StyleSheet.create({
     tab:{
-        backgroundColor: '#3E3737',
-        borderRadius: 35,
         alignSelf:"center",
-        width:350,
+        width: '100%',
         height:80,
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: 5,
-        marginBottom: 10,
+        boxShadow: [{
+            offsetX: 0,
+            offsetY: 15,
+            blurRadius: 20
+        }]
     },
     background:{
         flex:1,
-        backgroundColor: '#1B1818',
     }
 });
 
@@ -29,17 +30,17 @@ export default function Layout() {
             <TabSlot />
             <TabList style={TabStyle.tab}>
                 <TabTrigger name="home" href={"/"} asChild>
-                    <TabBarButton text="Home" image={require('../../assets/icons/home.png')} />
+                    <TabBarButton text="Home" image={require('../../assets/icons/home.png')} imageFocused={require('../../assets/icons/homef.png')} />
                 </TabTrigger>
                 <TabTrigger name="favorites" href={"/favorites"} asChild>
-                    <TabBarButton text="Favorites" image={require('../../assets/icons/favfilled.png')} />
+                    <TabBarButton text="Favorites" image={require('../../assets/icons/fav.png')} imageFocused={require('../../assets/icons/favf.png')} />
                 </TabTrigger>
-                <TabBarButton text="Add" image={require('../../assets/icons/add.png')} onPress={() => {router.push({pathname: '/add', params: {selectedSubCategory: ''}})}} />
+                <AddButton image={require('../../assets/icons/addd.png')} onPress={() => {router.push({pathname: '/add', params: {selectedSubCategory: ''}})}} />
                 <TabTrigger name="messages" href="/messages" asChild>
-                    <TabBarButton text="Chats" image={require('../../assets/icons/messages.png')} />
+                    <TabBarButton text="Chats" image={require('../../assets/icons/messages.png')} imageFocused={require('../../assets/icons/messagesf.png')}/>
                 </TabTrigger>
                 <TabTrigger name="myprofile" href="/myprofile" asChild>
-                    <TabBarButton text="My Profile" image={require('../../assets/icons/user.png')} />
+                    <TabBarButton text="My Profile" image={require('../../assets/icons/user.png')} imageFocused={require('../../assets/icons/userf.png')}/>
                 </TabTrigger>
                 
                 

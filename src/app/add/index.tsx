@@ -19,10 +19,7 @@ import CommonHeader from "@/src/components/common/CommonHeader";
 
 const pageStyle = StyleSheet.create({
     mainPage:{
-        flex: 1,
-        backgroundColor: '#1B1818',
-        
-        
+        flex: 1,        
     },
     screenContainer:{
         alignItems: "center",
@@ -154,13 +151,13 @@ export default function AddScreen(){
                 <InputLine placeholder="Title" value={title} onChangeText={setTitle} placeholderTextColor="#555" />
                 <InputCounter title="Title should contain minimum of 16 symbols " currentSymbolC={titlec} maxSymbolC={64}/>
                 
-                <OptionButton title={getCategoryTitle()} isNext onPress={() => router.push('/categories')} />
-                <InputLine placeholder="Description" value={description} onChangeText={setDescription} placeholderTextColor="#555" height={200} />
+                <OptionButton withIcon icon={require("../../assets/icons/categories.png")}title={getCategoryTitle()} isNext onPress={() => router.push('/categories')} />
+                <InputLine multiline placeholder="Description" value={description} onChangeText={setDescription} placeholderTextColor="#555" height={200} />
                 <InputCounter title="Description should contain minimum of 64 symbols" currentSymbolC={descc} maxSymbolC={4096}/>
             
                 <InputLine placeholder="Price" value={price.toString()} onChangeText={(text) => setPrice(Number(text))} placeholderTextColor="#555" inputMode="numeric" />
                 
-                <OptionButton title={regionsMap.placeById.get(selectedRegion) ? regionsMap.placeById.get(selectedRegion).full_path : "Select a region"} isNext onPress={()=>{router.push("/regions")}}/>
+                <OptionButton withIcon icon={require("../../assets/icons/location.png")} title={regionsMap.placeById.get(selectedRegion) ? regionsMap.placeById.get(selectedRegion).full_path : "Select a region"} isNext onPress={()=>{router.push("/regions")}}/>
                 <CommonButton title="Publish" isNext={false} onPress= {()=> {addListing();}}/>
             </ScrollView>
         </View>

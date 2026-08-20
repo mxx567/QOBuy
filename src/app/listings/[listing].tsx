@@ -16,12 +16,15 @@ import CommonButton from "@/src/components/common/CommonButton";
 
 const pageStyle = StyleSheet.create({
     mainPage:{
-        flex:1,
-        backgroundColor: '#1B1818'
+        flex:1
     },
     text:{
-        color: 'white',
-        padding: 5
+        color: 'black',
+    },
+    boldText:{
+        color: 'black',
+        fontSize: 20,
+        fontWeight: 'bold'
     },
     image:{
         width: 200,
@@ -29,20 +32,19 @@ const pageStyle = StyleSheet.create({
     },
     loadingContainer:{
         flex:1,
-        backgroundColor: '#1B1818',
         alignContent: 'center',
         justifyContent: 'center'
     },
     nameText:{
         fontSize: 24,
         fontWeight: 'bold',
-        color: 'white',
+        color: 'black',
         maxWidth:290
     },
     priceText:{
         fontSize: 32,
         fontWeight:'bold',
-        color: 'white'
+        color: 'black'
     },
     namePriceContainer:{
         flexDirection: 'row',
@@ -52,7 +54,13 @@ const pageStyle = StyleSheet.create({
         marginLeft: 'auto',
         marginRight: 10,
         marginTop: -25,
-        backgroundColor: "#2f2f2f",
+        backgroundColor: "#ffffff",
+        boxShadow:[{
+            offsetX:0,
+            offsetY:0,
+            blurRadius:5,
+            spreadDistance:-2
+        }],
         borderRadius: 100,
         width:45,
         height: 45,
@@ -60,7 +68,7 @@ const pageStyle = StyleSheet.create({
         justifyContent: 'center'
     },
     textHeader:{
-        color: 'white',
+        color: 'black',
         fontWeight: 'bold',
         fontSize:20
     },
@@ -73,16 +81,22 @@ const pageStyle = StyleSheet.create({
         gap: 10
     },
     secondaryText:{
-        color: "#4b4b4b"
+        color: "#6f6f6f"
     },
-    locationContainer:{
-        padding:15,
+    textWithIconContainer:{
+        marginTop: 5,
         flexDirection: "row",
+        gap: 5,
+        maxWidth: 280,
         alignItems: 'center',
     },
-    locationIcon:{
+    textIcon:{
         width:20,
         height:20
+    },
+    contacts:{
+        alignItems: 'center',
+        marginBottom: 10
     }
 });
 
@@ -196,7 +210,7 @@ export default function ListingScreen(){
     if (isAuthLoading || isLoading) {
         return (
         <View style={pageStyle.loadingContainer} >
-            <ActivityIndicator size="large" color="#fff" />
+            <ActivityIndicator size="large" color="#4E4AC9" />
         </View>
         );
     }
@@ -224,7 +238,15 @@ export default function ListingScreen(){
                             
                             <Text style= {pageStyle.nameText}>{listing[0].name}</Text>
                             <Text style= {pageStyle.priceText}>{listing[0].price} KZT</Text>
-                            <Text style = {pageStyle.secondaryText}>{date2string(listing[0].created_at) + " in " + subCategories.find((subc) => subc.id == listing[0].category).name}</Text>
+                            <View style= {pageStyle.textWithIconContainer}>
+                                <Image source={require('../../assets/icons/time.png')} style={pageStyle.textIcon} />
+                                <Text style = {pageStyle.secondaryText}>{date2string(listing[0].created_at)}</Text>
+                            </View>
+
+                            <View style= {pageStyle.textWithIconContainer}>
+                                <Image source={require('../../assets/icons/categories.png')} style={pageStyle.textIcon} />
+                                <Text style = {pageStyle.boldText}>{subCategories.find((category) => category.id == listing[0].category).name}</Text>
+                            </View>
                             
                         </View>
                         <View style = {pageStyle.likeButton}>
@@ -240,18 +262,21 @@ export default function ListingScreen(){
                     <View style= {pageStyle.descContainer}>
                         <Text style= {pageStyle.textHeader}>{"Description"}</Text>
                         <Text style= {pageStyle.text}>{listing[0].desc}</Text>
+                        <View style = {pageStyle.textWithIconContainer}>
+                            <Image style={pageStyle.textIcon} source={require("../../assets/icons/location.png")}/>
+                            <Text style= {pageStyle.boldText}>{regionsMap.placeById.get(listing[0].place_id).full_path}</Text>
+                        </View>
                     </View>
-                    <View style = {pageStyle.locationContainer}>
-                        <Image style={pageStyle.locationIcon} source={require("../../assets/icons/location.png")}/>
-                        <Text style= {pageStyle.text}>{regionsMap.placeById.get(listing[0].place_id).full_path}</Text>
+                    <View style={pageStyle.contacts}>
+                        <CommonButton title = "Chat"onPress={() => {router.push({pathname: "/chats/[chat]", params: { chat : JSON.stringify({
+                            chatid : "create",
+                            listingid : listing[0].id,
+                            listing_name: listing[0].name,
+                            to : listing[0].user_id
+                        }) }})}}/>
                     </View>
-
-                    <CommonButton title = "Chat"onPress={() => {router.push({pathname: "/chats/[chat]", params: { chat : JSON.stringify({
-                        chatid : "create",
-                        listingid : listing[0].id,
-                        listing_name: listing[0].name,
-                        to : listing[0].user_id
-                    }) }})}}/>
+                    
+                    
                     
                 </ScrollView>
             }

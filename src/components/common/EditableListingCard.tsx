@@ -17,11 +17,11 @@ interface EditableListingProps {
 
 const ListingStyle = StyleSheet.create({
     listingContainer:{
-        backgroundColor: '#242424',
         padding: 15
     },
     listingDataContainer:{
         flexDirection : 'row',
+        height: 200,
         alignItems: 'center',
         gap: 10
     },
@@ -32,12 +32,15 @@ const ListingStyle = StyleSheet.create({
     },
     title:{
         fontFamily: 'HelveticaNeue-Bold',
-        color: 'white',
-        fontSize: 20
+        color: '#020202',
+        fontWeight: 'bold',
+        fontSize: 20,
+        maxWidth: 200
     },
     price:{
         fontFamily: 'HelveticaNeue-Bold',
-        color: 'white',
+        color: 'black',
+        fontWeight: 'bold',
         fontSize: 20
     },
     smallText:{
@@ -78,7 +81,7 @@ const EditableListingCard = ({image, name ='UNKNOWN' ,isLiked = false , category
 
                 <View style = {ListingStyle.rightContainer}>
                     <Text style = {ListingStyle.title}>{name}</Text>
-                    <Text style = {ListingStyle.price}>{price}</Text>
+                    <Text style = {ListingStyle.price}>{price + " KZT"}</Text>
                     <View style = {ListingStyle.bottomContainer}>
                         <View style ={ListingStyle.catdate}>
                             <Text style = {ListingStyle.smallText}>{category}</Text>

@@ -10,7 +10,6 @@ import { useRouter } from "expo-router";
 const pageStyle = StyleSheet.create({
     mainPage:{
         flex: 1,
-        backgroundColor: '#1B1818',
         alignItems: "center",
     },
     image:{
@@ -20,7 +19,7 @@ const pageStyle = StyleSheet.create({
         borderRadius:100
     },
     text:{
-        color:'white',
+        color:'black',
         fontWeight: 'bold',
         fontSize:20,
         marginBottom: 30,        
@@ -48,12 +47,12 @@ export default function ProfileScreen(){
             <Image source={{uri: profile.avatar_url}} style={pageStyle.image}/>
             <Text style={pageStyle.text}> Hello, {profile.username}! 👋 </Text>
             <View style = {pageStyle.buttons}>
-                <OptionButton title="My Listings" onPress={()=>{router.push("/mylistings")}} isNext/>
-                <OptionButton title="Options" onPress={()=>{}} isNext/>
+                <OptionButton withIcon icon={require("../../../assets/icons/categories.png")} title="My Listings" onPress={()=>{router.push("/mylistings")}} isNext/>
+                <OptionButton withIcon icon={require("../../../assets/icons/options.png")} title="Options" onPress={()=>{}} isNext/>
             </View>
             
             
             <CommonButton title="Sign Out" onPress={()=>{onSignOutButtonPress()}}/>
         </View>
     );
-}
+}              

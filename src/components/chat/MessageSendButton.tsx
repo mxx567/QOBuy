@@ -10,7 +10,7 @@ interface MessageButtonProps {
 const MessageButtonStyle = StyleSheet.create({
     button: {
         flexDirection: 'row',
-        backgroundColor: '#3E3737',
+        backgroundColor: '#4E4AC9',
         borderRadius: 100,
         width: 40,
         height: 40,

@@ -9,7 +9,6 @@ const userCardStyle = StyleSheet.create({
         alignItems: 'center',
         gap: 5,
         height: 80,
-        padding: 10
     },
     avatar:{
         width:70,
@@ -17,7 +16,7 @@ const userCardStyle = StyleSheet.create({
         borderRadius: 100
     },
     userNameText:{
-        color: 'white',
+        color: 'black',
         fontSize: 20,
         fontWeight: 'bold',
         maxWidth:190
@@ -26,12 +25,12 @@ const userCardStyle = StyleSheet.create({
         width:70,
         height:70,
         borderRadius: 100,
-        backgroundColor: '#4b4b4b',
+        backgroundColor: '#6f6f6f',
     },
     textSkeleton:{
         color: 'white',
         fontSize: 20,
-        backgroundColor: '#4b4b4b',
+        backgroundColor: '#6f6f6f',
         height: 15,
         width: 225,
         borderRadius:10,
@@ -41,7 +40,7 @@ const userCardStyle = StyleSheet.create({
         gap:10
     },
     userDesc:{
-        color: '#4b4b4b',
+        color: '#6f6f6f',
         maxWidth:190
     }
 })

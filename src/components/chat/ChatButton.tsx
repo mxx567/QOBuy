@@ -11,7 +11,8 @@ const ChatButtonStyle = StyleSheet.create({
     button: {
         flexDirection: 'row',
         width: '100%',
-        height:60,
+        height:70,
+
         textAlign: 'center',
         lineHeight: 50,
         fontSize: 20,
@@ -19,19 +20,19 @@ const ChatButtonStyle = StyleSheet.create({
         alignItems: 'center',
     },
     text: {
-        color: 'white',
+        color: 'black',
         fontSize: 20,
         fontWeight: 'bold',
-        maxWidth: 260
+        maxWidth: 250
     },
     image: {
-        marginLeft: 20,
         width: 50,
         height: 50,
         borderRadius: 100,
     },
     lastMsg: {
-        color: "#4b4b4b"
+        color: "#4b4b4b",
+        maxWidth: 250
     }
 });
 

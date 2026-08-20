@@ -18,31 +18,30 @@ const ListingStyle = StyleSheet.create({
     listingContainer:{
         flexDirection : 'row',
         height: 200,
-        backgroundColor: '#242424',
         alignItems: 'center',
         gap: 10
     },
     listingImage:{
         width: 150,
         height: 150,
-        marginLeft:20,
         borderRadius: 10,
     },
     title:{
         fontFamily: 'HelveticaNeue-Bold',
-        color: 'white',
+        color: '#020202',
+        fontWeight: 'bold',
         fontSize: 20,
         maxWidth: 200
     },
     price:{
         fontFamily: 'HelveticaNeue-Bold',
-        color: 'white',
+        color: 'black',
         fontWeight: 'bold',
         fontSize: 20
     },
     smallText:{
         fontFamily: 'HelveticaNeue-Light',
-        color: '#4b4b4b',
+        color: '#6f6f6f',
         fontSize: 12
     },
     rightContainer:{

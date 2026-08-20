@@ -7,12 +7,11 @@ import CommonErrorText from "../components/common/CommonErrorText";
 import { useRouter } from 'expo-router'
 
 
-const router = useRouter();
+
 
 const loginStyle = StyleSheet.create({
     mainContainer:{
         flex:1,
-        backgroundColor: '#1B1818',
         alignItems: "center",
         justifyContent: "center",
         gap: 5
@@ -23,8 +22,9 @@ const loginStyle = StyleSheet.create({
         marginBottom: 20
     },
     text:{
-        color: 'white',
+        color: 'black',
         fontSize:20,
+        fontWeight: 'bold'
     }
 });
 
@@ -51,6 +51,7 @@ function getFriendlyAuthError(error: { message?: string } | null) {
 
 
 export default function LoginScreen() {
+    const router = useRouter();
     const [iemail, setIEmail] = useState('');
     const [ipassword, setIPassword] = useState('');
     const [message, setMessage] = useState('');

@@ -7,8 +7,12 @@ const headerStyle = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         padding: 10,
-        backgroundColor: '#2f2c2c',
-        gap:10
+        gap:10,
+        boxShadow: [{
+            offsetX: 0,
+            offsetY: -12,
+            blurRadius:20
+        }]
     },
     charInfo:{
         flexDirection: 'column'
@@ -23,7 +27,7 @@ const headerStyle = StyleSheet.create({
         height: 24,
     },
     headerText: {
-        color: 'white',
+        color: 'black',
         fontSize: 18,
         fontWeight: "bold",
     },

@@ -13,16 +13,14 @@ import { useAuthContext } from "@/src/hooks/AuthContext";
 const pageStyle = StyleSheet.create({
     mainPage:{
         flex: 1,
-        backgroundColor: '#1B1818',
-        marginTop: 50,
+        padding: 15
     },
     text:{
-        color: 'white',
+        color: 'black',
         alignSelf: 'center',
     },
     loadingContainer:{
         flex:1,
-        backgroundColor: '#1B1818',
         alignContent: 'center',
         justifyContent: 'center'
     }
@@ -101,7 +99,7 @@ export default function IndexScreen(){
 
     
     const getListings = async () => {
-        const { data, error } = await supabase.from("Listings").select("*");
+        const { data, error } = await supabase.from("Listings").select("*").limit(30);
         if (error) {
             console.error("Error fetching listings:", error.message);
             return;
@@ -140,7 +138,7 @@ export default function IndexScreen(){
     if (isAuthLoading || isLoading) {
         return (
         <View style={pageStyle.loadingContainer}>
-            <ActivityIndicator size="large" color="#fff" />
+            <ActivityIndicator size="large" color="#4E4AC9" />
         </View>
         );
     }

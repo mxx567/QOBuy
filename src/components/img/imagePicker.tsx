@@ -16,7 +16,7 @@ const pickerStyle = StyleSheet.create({
     ImagePickerButtonSmall:{
         width: 100,
         height: 100,
-        backgroundColor: "#2f2c2c",
+        backgroundColor: "#53D2DB",
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: 12
@@ -45,7 +45,7 @@ export function ImagePicker({onPress} : {onPress: () => void }){
 export function ImagePickerSmall( {onPress} : {onPress: () => void }){
     return(
         <Pressable onPress={onPress} style={pickerStyle.ImagePickerButtonSmall}>
-            <Image source={require('../../assets/icons/add.png')} style={pickerStyle.imageAddSmall}/>
+            <Image source={require('../../assets/icons/addd.png')} style={pickerStyle.imageAddSmall}/>
         </Pressable>
     )
 }

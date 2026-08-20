@@ -9,19 +9,27 @@ const CarouselStyle = StyleSheet.create({
     indexContainer:{
         position: 'absolute',
         zIndex: 10,
-        backgroundColor: "#1f1e1e",
+        backgroundColor: "#fffefe",
         width: 60,
         height: 40,
         borderRadius: 20,
         alignItems: 'center',
         justifyContent: 'center',
         marginLeft: 10,
-        marginTop: 10
+        marginTop: 10,
     },
     indexText:{
-        color:'white',
+        color:'black',
         fontSize: 14
     },
+    mainContainer:{
+        boxShadow:[{
+            offsetX:0,
+            offsetY:-2,
+            blurRadius:5,
+            inset: true
+        }],
+    }
 });
 
 export default function Carousel({data} : {data : uploadedImage[]}){
@@ -49,6 +57,7 @@ export default function Carousel({data} : {data : uploadedImage[]}){
                 keyExtractor={item => data.indexOf(item).toString()}
                 showsHorizontalScrollIndicator = {false}
                 onViewableItemsChanged={_onViewableItemsChanged}
+                style = {CarouselStyle.mainContainer}
                 renderItem={({item}) =>{
                     if (!item?.uri) {
                         return (

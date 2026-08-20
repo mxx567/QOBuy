@@ -7,17 +7,20 @@ const headerStyle = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         padding: 10,
-        backgroundColor: '#2f2c2c',
+        boxShadow: [{
+            offsetX: 0,
+            offsetY: -12,
+            blurRadius:20
+        }]
     },
     backIcon: {
-        width: 24,
-        height: 24,
+        width: 20,
+        height: 20,
         marginRight: 10,
     },
     headerText: {
-        color: 'white',
+        color: 'black',
         fontSize: 18,
-        fontWeight: "bold",
     }
 });
 

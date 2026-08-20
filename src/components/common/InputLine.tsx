@@ -9,19 +9,18 @@ interface InputLineProps {
     placeholderTextColor?: string, 
     secureTextEntry?: boolean, 
     inputMode?: InputModeOptions,
+    multiline?: boolean,
     height?: number
 }
 
-export default function InputLine({value, onChangeText, placeholder, placeholderTextColor = "#000000" , secureTextEntry, inputMode = "text", height = 40}: InputLineProps) {
+export default function InputLine({value, onChangeText, placeholder, multiline , placeholderTextColor = "#000000" , secureTextEntry, inputMode = "text", height = 40}: InputLineProps) {
     const inputLineStyle = StyleSheet.create({
     input: {
-        backgroundColor: '#00000000',
-        color: 'white',
-        borderWidth: 2,
-        borderColor: '#555',
+        backgroundColor: '#E0E0E0',
+        color: 'black',
         width: 340,
         height: height,
-        borderRadius: 20,
+        borderRadius: 10,
         padding: 10,
         textAlign: 'left',
         textAlignVertical: 'top',
@@ -29,7 +28,8 @@ export default function InputLine({value, onChangeText, placeholder, placeholder
 });
     return (
         <View>
-            <TextInput
+            <TextInput  
+                multiline={multiline}
                 style={inputLineStyle.input}
                 value={value}
                 onChangeText={onChangeText}

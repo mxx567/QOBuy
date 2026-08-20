@@ -19,8 +19,7 @@ import CommonHeader from "@/src/components/common/CommonHeader";
 
 const pageStyle = StyleSheet.create({
     mainPage:{
-        flex: 1,
-        backgroundColor: '#1B1818',
+        flex: 1
     },
     screenContainer:{
         alignItems: "center",
@@ -188,34 +187,36 @@ export default function AddScreen(){
             <StatusBar />
                 
             <CommonHeader headerText="Edit Listing"/>
-                
-            <ScrollView contentContainerStyle={pageStyle.screenContainer}>
-            <ScrollView contentContainerStyle={pageStyle.imgagesContainer} horizontal>
-                {existingImg && existingImg.map((img) =>(
-                    <Pressable key={existingImg.indexOf(img)} onPress={() => {setExistingImg([...existingImg.slice(0, existingImg.indexOf(img)), ...existingImg.slice(existingImg.indexOf(img) + 1)])}}>
-                        <Image source={{uri: img.uri}} style={pageStyle.image} key = {existingImg.indexOf(img)}/>
-                    </Pressable>
-                ))}
-                {image && image.map((img) =>(
-                    <Pressable key = {image.indexOf(img)} onPress={() => setImage([...image.slice(0, image.indexOf(img)), ...image.slice(image.indexOf(img) + 1)])}>
-                        <Image source={{uri: img.uri}} style={pageStyle.image}/>
-                    </Pressable>
-                ))}
-                {image && <ImagePickerSmall key={21} onPress= {() => pickImage()}/>}
+            <ScrollView>
+                <ScrollView contentContainerStyle={pageStyle.screenContainer}>
+                <ScrollView contentContainerStyle={pageStyle.imgagesContainer} horizontal>
+                    {existingImg && existingImg.map((img) =>(
+                        <Pressable key={existingImg.indexOf(img)} onPress={() => {setExistingImg([...existingImg.slice(0, existingImg.indexOf(img)), ...existingImg.slice(existingImg.indexOf(img) + 1)])}}>
+                            <Image source={{uri: img.uri}} style={pageStyle.image} key = {existingImg.indexOf(img)}/>
+                        </Pressable>
+                    ))}
+                    {image && image.map((img) =>(
+                        <Pressable key = {image.indexOf(img)} onPress={() => setImage([...image.slice(0, image.indexOf(img)), ...image.slice(image.indexOf(img) + 1)])}>
+                            <Image source={{uri: img.uri}} style={pageStyle.image}/>
+                        </Pressable>
+                    ))}
+                    {image && <ImagePickerSmall key={21} onPress= {() => pickImage()}/>}
+                    </ScrollView>
+                    <InputLine placeholder="Title" value={title} onChangeText={setTitle} placeholderTextColor="#555" />
+                    <InputCounter title="Title should contain minimum of 16 symbols " currentSymbolC={titlec} maxSymbolC={64}/>
+                        
+                    <OptionButton withIcon icon={require("../../assets/icons/categories.png")} title={selectedCategory ? categories.find((c) => c.id == selectedCategory).name + ", " + subCategories?.find((subCategory)=> subCategory.id == selectedSubCategoryId).name: "Select Category" } isNext onPress={() => router.push('/categories')} />
+                    <InputLine multiline placeholder="Description" value={description} onChangeText={setDescription} placeholderTextColor="#555" height={200} />
+                    <InputCounter title="Description should contain minimum of 64 symbols" currentSymbolC={descc} maxSymbolC={4096}/>
+                    
+                    <InputLine placeholder="Price" value={price} onChangeText={setPrice} placeholderTextColor="#555" inputMode="numeric" />
+                        
+                    <OptionButton withIcon icon={require("../../assets/icons/location.png")} title={regionsMap.placeById.get(selectedRegion) ? regionsMap.placeById.get(selectedRegion).full_path : "Select a region"} isNext onPress={()=>{router.push("/regions")}}/>
+                    <CommonButton title="Publish" isNext={false} onPress= {()=> updateListing()}/>
+                    <CommonButton title="Remove" isNext={false} onPress= {()=> removeListing()}/>
                 </ScrollView>
-                <InputLine placeholder="Title" value={title} onChangeText={setTitle} placeholderTextColor="#555" />
-                <InputCounter title="Title should contain minimum of 16 symbols " currentSymbolC={titlec} maxSymbolC={64}/>
-                    
-                <OptionButton title={selectedCategory ? categories.find((c) => c.id == selectedCategory).name + ", " + subCategories?.find((subCategory)=> subCategory.id == selectedSubCategoryId).name: "Select Category" } isNext onPress={() => router.push('/categories')} />
-                <InputLine placeholder="Description" value={description} onChangeText={setDescription} placeholderTextColor="#555" height={200} />
-                <InputCounter title="Description should contain minimum of 64 symbols" currentSymbolC={descc} maxSymbolC={4096}/>
-                
-                <InputLine placeholder="Price" value={price} onChangeText={setPrice} placeholderTextColor="#555" inputMode="numeric" />
-                    
-                <OptionButton title={regionsMap.placeById.get(selectedRegion) ? regionsMap.placeById.get(selectedRegion).full_path : "Select a region"} isNext onPress={()=>{router.push("/regions")}}/>
-                <CommonButton title="Publish" isNext={false} onPress= {()=> updateListing()}/>
-                <CommonButton title="Remove" isNext={false} onPress= {()=> removeListing()}/>
             </ScrollView>
+            
         </View>
     );
 }

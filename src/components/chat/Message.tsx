@@ -12,7 +12,7 @@ export default function InputLine({value,desc, msgbyuser}: MessageProps) {
     const messageStyle = StyleSheet.create({
         messageContainer: {
             alignSelf: msgbyuser ? 'flex-end' : 'flex-start',
-            backgroundColor: '#525252',
+            backgroundColor: '#4E4AC9',
             minWidth: 20,
             maxWidth:260,
             borderRadius: 20,
@@ -25,7 +25,7 @@ export default function InputLine({value,desc, msgbyuser}: MessageProps) {
         },
         descMsg: {
             alignSelf: msgbyuser ? 'flex-end' : 'flex-start',
-            color: "#4b4b4b",
+            color: "#6f6f6f",
             fontSize: 10,
             marginLeft:7
         }

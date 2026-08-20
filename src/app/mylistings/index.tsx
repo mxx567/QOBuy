@@ -15,10 +15,8 @@ import { EditableListingCard } from "@/src/components/common/EditableListingCard
 const pageStyle = StyleSheet.create({
     myListingsPage:{
         flex: 1,
-        backgroundColor: '#1B1818',
     },
     scrollContainer:{
-        backgroundColor: '#1B1818',
     }
     
 });

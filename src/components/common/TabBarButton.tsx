@@ -3,6 +3,7 @@ import {Image, Text, StyleSheet, Pressable, ImageSourcePropType} from "react-nat
 interface TabBarButtonDesc {
     text: string;
     image: ImageSourcePropType;
+    imageFocused: ImageSourcePropType;
     isFocused?: boolean;
     onPress?: () => void;
 }
@@ -10,41 +11,34 @@ interface TabBarButtonDesc {
 const TabBarButtonStyle = StyleSheet.create({
     button:{
         width: 70,
-        height: 60,
-        borderRadius: 20,
+        height: 70,
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: 5,
-        marginBottom: 5,
-    },
-    buttonPressed:{
-        width: 70,
-        height: 60,
-        borderRadius: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginTop: 5,
-        marginBottom: 5,
-        backgroundColor: '#7A6D6D',
     },
     image:{
         width:30,
-        height:30
+        height:30,
     },
     text:{
         alignSelf: 'center',
-        color: 'white',
+        color: '#6f6f6f',
+        fontFamily: 'HelveticaNeue-Light',
+        fontSize: 12,
+    },
+    textFocused:{
+        alignSelf: 'center',
+        color: '#4E4AC9',
         fontFamily: 'HelveticaNeue-Light',
         fontSize: 12,
     }
 })
 
 
-const TabBarButton = ({text, image, isFocused, onPress, ...props}: TabBarButtonDesc) =>{
+const TabBarButton = ({text, image, imageFocused , isFocused, onPress, ...props}: TabBarButtonDesc) =>{
     return(
-    <Pressable {...props} style={isFocused ? TabBarButtonStyle.buttonPressed : TabBarButtonStyle.button} onPress={onPress}>
-        <Image source={image} style = {TabBarButtonStyle.image}/>
-        <Text style = {TabBarButtonStyle.text}>{text}</Text>
+    <Pressable {...props} style={TabBarButtonStyle.button} onPress={onPress}>
+        <Image source={isFocused? imageFocused : image} style = {TabBarButtonStyle.image}/>
+        <Text style = {isFocused?  TabBarButtonStyle.textFocused : TabBarButtonStyle.text}>{text}</Text>
     </Pressable>)
 }
 

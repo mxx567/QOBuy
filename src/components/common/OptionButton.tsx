@@ -11,33 +11,25 @@ interface OptionButtonProps {
 const OptionButtonStyle = StyleSheet.create({
     button: {
         flexDirection: 'row',
-        borderTopWidth: 2,
-        borderBottomWidth: 2,
-        borderTopColor: '#3E3737',
-        borderBottomColor: '#3E3737',
-        marginTop:-2,
         width: '100%',
-        height:60,
+        height:65,
         textAlign: 'center',
-        lineHeight: 50,
         fontSize: 20,
         alignItems: 'center',
+        padding: 20,
+        gap: 15
     },
     text: {
-        marginLeft: 20,
-        color: 'white',
+        color: 'black',
         fontSize: 20,
         maxWidth: 260
     },
     image: {
-        marginLeft: 20,
         width: 20,
         height: 20,
-        borderRadius: 100,
     },
     isNext:{
         marginLeft: 'auto',
-        marginRight: 20,
     }
 });
 

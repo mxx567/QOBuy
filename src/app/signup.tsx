@@ -10,8 +10,7 @@ import CommonHeader from '../components/common/CommonHeader';
 
 const loginStyle = StyleSheet.create({
     mainContainer:{
-        flex:1,
-        backgroundColor: '#1B1818',
+        flex:1
     },
     inputContainer:{
         marginTop:100,
@@ -25,9 +24,10 @@ const loginStyle = StyleSheet.create({
         marginBottom: 20
     },
     text:{
-        color: 'white',
+        color: 'black',
         fontSize:20,
-        
+        fontWeight: 'bold'
+
     }
 });
 

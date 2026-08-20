@@ -10,7 +10,6 @@ import { useListingDescriptionContext } from "@/src/hooks/ListingDescriptionCont
 const pageStyle = StyleSheet.create({
     mainContainer:{
         flex:1,
-        backgroundColor: '#1B1818',
         alignItems: "center",
     },
     text:{
