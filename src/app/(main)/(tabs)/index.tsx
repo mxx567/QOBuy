@@ -9,10 +9,13 @@ import { uploadedImage } from "@/utils/imgbb";
 import { useNavigation, useRouter } from "expo-router";
 import { useListingDescriptionContext } from "@/src/hooks/ListingDescriptionContext";
 import { useAuthContext } from "@/src/hooks/AuthContext";
+import SearchBar from "@/src/components/common/SearchBar";
 
 const pageStyle = StyleSheet.create({
-    mainPage:{
+    pageContainer:{
         flex: 1,
+    },
+    mainPage:{
         padding: 15
     },
     text:{
@@ -151,24 +154,28 @@ export default function IndexScreen(){
         );
     }
     return (
-        <ScrollView style={pageStyle.mainPage}>
-            {listings.map((listing: any) => {
-                const isLiked = likedListingIds.includes(listing.id);
-                return(
-                    <ListingCard 
-                        onPress={() => {router.push({pathname: "/listings/[listing]", params: {listing: listing.id}})}}
-                        key={listing.id} 
-                        name={listing.name.toString()}
-                        image={listing.pictures.length == 0 ? undefined : JSON.parse(listing.pictures[0]).uri}
-                        price={listing.price.toString()}
-                        isLiked={isLiked}
-                        category={subCategories.find((subc) => subc.id == listing.category).name}
-                        onLikePress={(nextIsLiked)=>  toggleFavorite(listing.id, nextIsLiked)}
-                        publishDate={date2string(listing.created_at)}
-                    />
-                );
-            })}
-        </ScrollView>
+        <View style={pageStyle.pageContainer}>
+            <SearchBar onPress={()=>{router.push('/search')}}/>
+            <ScrollView style={pageStyle.mainPage}>
+                {listings.map((listing: any) => {
+                    const isLiked = likedListingIds.includes(listing.id);
+                    return(
+                        <ListingCard 
+                            onPress={() => {router.push({pathname: "/listings/[listing]", params: {listing: listing.id}})}}
+                            key={listing.id} 
+                            name={listing.name.toString()}
+                            image={listing.pictures.length == 0 ? undefined : JSON.parse(listing.pictures[0]).uri}
+                            price={listing.price.toString()}
+                            isLiked={isLiked}
+                            category={subCategories.find((subc) => subc.id == listing.category).name}
+                            onLikePress={(nextIsLiked)=>  toggleFavorite(listing.id, nextIsLiked)}
+                            publishDate={date2string(listing.created_at)}
+                        />
+                    );
+                })}
+            </ScrollView>
+        </View>
+        
     );
 }
 

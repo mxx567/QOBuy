@@ -13,7 +13,7 @@ interface InputLineProps {
     height?: number
 }
 
-export default function InputLine({value, onChangeText, placeholder, multiline , placeholderTextColor = "#000000" , secureTextEntry, inputMode = "text", height = 40}: InputLineProps) {
+export default function InputLine({value, onChangeText, placeholder, multiline , placeholderTextColor = "#555" , secureTextEntry, inputMode = "text", height = 40}: InputLineProps) {
     const inputLineStyle = StyleSheet.create({
     input: {
         backgroundColor: '#E0E0E0',

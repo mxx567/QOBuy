@@ -24,7 +24,7 @@ export default function category() {
 
 
 
-    const { selectedCategory, setSelectedCategory, selectedSubCategoryId, setSelectedSubCategoryId, subCategories, categories, isEditMode} = useListingDescriptionContext();
+    const { selectedCategory, isSearchMode , setSelectedCategory, selectedSubCategoryId, setSelectedSubCategoryId, subCategories, categories, isEditMode} = useListingDescriptionContext();
 
 
 
@@ -43,6 +43,9 @@ export default function category() {
                             setSelectedSubCategoryId(subCat.id);
                             if(isEditMode){
                                 router.dismissTo("/edit");
+                            }
+                            else if(isSearchMode){
+                                router.dismissTo("/search")
                             }
                             else{
                                 router.dismissTo("/add")

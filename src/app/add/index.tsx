@@ -48,11 +48,16 @@ export default function AddScreen(){
     const { profile } = useAuthContext();
     const [title, setTitle] = useState<string>('');
     const [description, setDescription] = useState<string>('');
-    const { selectedCategory, selectedSubCategoryId, selectedRegion, setSelectedCategory, setSelectedRegion, setSelectedSubCategoryId, categories, subCategories, regionsMap,setIsEditMode } = useListingDescriptionContext();
+    const { selectedCategory, selectedSubCategoryId, selectedRegion, setSelectedCategory, setSelectedRegion, setSelectedSubCategoryId, categories, subCategories, regionsMap,setIsEditMode, setIsSearchMode } = useListingDescriptionContext();
     const [price, setPrice] = useState<number>(0);
 
     const [titlec, setTitleC] = useState(0);
     const [descc, setdescC] = useState(0);
+
+    useEffect(()=>{
+        setIsEditMode(false);
+        setIsSearchMode(true);
+    },[])
 
 
     function getCategoryTitle(){

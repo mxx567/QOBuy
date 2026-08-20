@@ -12,13 +12,12 @@ export default function RegionScreen() {
 
     const params  = useLocalSearchParams<{region : string}>();
 
-    const { regionsMap, isEditMode } = useListingDescriptionContext();
+    const { regionsMap, isEditMode, isSearchMode } = useListingDescriptionContext();
 
 
     const pageStyle = StyleSheet.create({
         mainContainer:{
             flex:1,
-            backgroundColor: '#1B1818',
             alignItems: "center",
         },
         text:{
@@ -28,9 +27,6 @@ export default function RegionScreen() {
     });
 
     const { setSelectedRegion } = useListingDescriptionContext();
-
-    console.log(regionsMap.childrenByParent)
-    console.log(regionsMap.childrenByParent.get(1))
     return (
         <View style={pageStyle.mainContainer}>
             <CommonHeader headerText={"Select a District/City"}/>
@@ -42,6 +38,9 @@ export default function RegionScreen() {
                                 setSelectedRegion(regionData.id);
                                 if(isEditMode){
                                     router.dismissTo("/edit");
+                                }
+                                else if(isSearchMode){
+                                    router.dismissTo("/search")
                                 }
                                 else{
                                     router.dismissTo("/add")

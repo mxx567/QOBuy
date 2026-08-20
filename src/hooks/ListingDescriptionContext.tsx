@@ -23,8 +23,10 @@ export const ListingDescriptionContext = createContext<{
   subCategories: any[];
   regionsMap: RegionArray;
   isEditMode: boolean;
+  isSearchMode: boolean;
   setIsEditMode: (isEditMode: boolean) => void;
   isLoading : boolean;
+  setIsSearchMode: (isSearchMode: boolean) => void;
 }>({ 
       categories: [],
       subCategories: [],
@@ -37,7 +39,9 @@ export const ListingDescriptionContext = createContext<{
       regionsMap: {places: [],placeById: new Map(), childrenByParent: new Map(), placesByLevel: new Map()},
       isEditMode: false,
       setIsEditMode: () => {},
-      isLoading: false
+      isLoading: false,
+      isSearchMode: false,
+      setIsSearchMode: () => {},
     }
   );
 
@@ -51,7 +55,7 @@ export const ListingDescriptionProvider = ({ children }: PropsWithChildren) => {
   const [subCategories, setSubCategories] = useState<any[]>([]);
   const [regions, setRegions] = useState<any[]>([]);
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
-  
+  const [isSearchMode, setIsSearchMode] = useState<boolean>(false);
 
 
   useEffect(() => {
@@ -101,7 +105,7 @@ export const ListingDescriptionProvider = ({ children }: PropsWithChildren) => {
 
   
   return (
-    <ListingDescriptionContext.Provider value={{ selectedCategory, setSelectedCategory, selectedSubCategoryId, setSelectedSubCategoryId, selectedRegion, setSelectedRegion, categories, subCategories, regionsMap, isEditMode, setIsEditMode, isLoading}}>
+    <ListingDescriptionContext.Provider value={{ selectedCategory, setSelectedCategory, selectedSubCategoryId, setSelectedSubCategoryId, selectedRegion, setSelectedRegion, categories, subCategories, regionsMap, isEditMode, setIsEditMode, isLoading, isSearchMode, setIsSearchMode}}>
       {children}
     </ListingDescriptionContext.Provider>
   );
