@@ -1,9 +1,7 @@
-import { useLocalSearchParams, usePathname, useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import OptionButton from "@/src/components/common/OptionButton";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView } from "react-native";
 import CommonHeader from "@/src/components/common/CommonHeader";
-import { supabase } from "@/utils/supabase";
-import { useEffect, useState } from "react";
 
 import { useListingDescriptionContext } from "@/src/hooks/ListingDescriptionContext";
 
@@ -24,33 +22,45 @@ export default function category() {
 
 
 
-    const { selectedCategory, isSearchMode , setSelectedCategory, selectedSubCategoryId, setSelectedSubCategoryId, subCategories, categories, isEditMode} = useListingDescriptionContext();
+    const { isSearchMode, setSelectedCategory, setSelectedSubCategoryId, subCategories, categories, isEditMode} = useListingDescriptionContext();
+
+    const categoryId = Number(params.category);
+    const category = categories.find((cat) => cat.id == categoryId);
+
+    const selectCategory = (subCategoryId: number) => {
+        setSelectedCategory(categoryId);
+        setSelectedSubCategoryId(subCategoryId);
+        if(isEditMode){
+            router.dismissTo("/edit");
+        }
+        else if(isSearchMode){
+            router.dismissTo("/search");
+        }
+        else{
+            router.dismissTo("/add");
+        }
+    };
 
 
 
     return (
         <View style={pageStyle.mainContainer}>
-            <CommonHeader headerText={categories.find((cat) => cat.id == params.category).name} />
+            <CommonHeader headerText={category?.name ?? "Category"} />
 
             <ScrollView contentContainerStyle={pageStyle.mainContainer}>
-                {subCategories && subCategories.filter((subCat) => subCat.category_id == Number(params.category)).map((subCat) => 
+                {isSearchMode &&
+                    <OptionButton
+                        title={`All of ${category?.name ?? "this category"}`}
+                        isNext
+                        onPress={() => selectCategory(0)}
+                    />
+                }
+                {subCategories && subCategories.filter((subCat) => subCat.category_id == categoryId).map((subCat) => 
                     <OptionButton
                         key={subCat.id}
                         title={subCat.name}
                         isNext
-                        onPress={() => {
-                            setSelectedCategory(subCat.category_id);
-                            setSelectedSubCategoryId(subCat.id);
-                            if(isEditMode){
-                                router.dismissTo("/edit");
-                            }
-                            else if(isSearchMode){
-                                router.dismissTo("/search")
-                            }
-                            else{
-                                router.dismissTo("/add")
-                            }
-                        }}
+                        onPress={() => selectCategory(subCat.id)}
                     />)
                 }
             </ScrollView>

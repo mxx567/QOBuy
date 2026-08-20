@@ -9,7 +9,7 @@ import { useListingDescriptionContext } from '@/src/hooks/ListingDescriptionCont
 export default function RegionsScreen() {
     const router = useRouter();
     
-    const { regionsMap } = useListingDescriptionContext();
+    const { regionsMap, isSearchMode, setSelectedRegion } = useListingDescriptionContext();
 
 
     const pageStyle = StyleSheet.create({
@@ -35,6 +35,16 @@ export default function RegionsScreen() {
                     regionsMap.placesByLevel.get(1)?.map((region : any)=>(
                         <OptionButton key = {region.id} title={region.name_en} onPress={()=>{router.push({pathname: '/regions/[region]', params: { region:  region.id }})}} isNext/>
                     ))
+                }
+                {isSearchMode &&
+                    <OptionButton
+                        title={"None"}
+                        isNext
+                        onPress={() => {
+                            setSelectedRegion(0)
+                            router.dismissTo('/search')
+                        }}
+                    />
                 }
             </ScrollView>
             

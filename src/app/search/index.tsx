@@ -56,13 +56,38 @@ export default function IndexScreen(){
                 .select("id", { count: "exact", head: true });
 
             if (title.trim()) {
-                query = query.ilike("name", `%${title.trim()}%`);
+                query = query.ilike("name", `%${title.trim()}%`).ilike("desc", `%${title.trim()}%`);
             }
+            
             if (selectedSubCategoryId) {
                 query = query.eq("category", selectedSubCategoryId);
+            } else if (selectedCategory) {
+                const categorySubcategoryIds = subCategories
+                    .filter((subCategory) => subCategory.category_id == selectedCategory)
+                    .map((subCategory) => subCategory.id);
+
+                query = categorySubcategoryIds.length
+                    ? query.in("category", categorySubcategoryIds)
+                    : query.eq("category", -1);
             }
             if (selectedRegion) {
-                query = query.eq("place_id", selectedRegion);
+                const regionIds = [selectedRegion];
+                const regionsToVisit = [selectedRegion];
+
+                while (regionsToVisit.length) {
+                    const regionId = regionsToVisit.pop();
+                    if (regionId === undefined) {
+                        continue;
+                    }
+                    const children = regionsMap.childrenByParent.get(regionId) ?? [];
+
+                    for (const child of children) {
+                        regionIds.push(child.id);
+                        regionsToVisit.push(child.id);
+                    }
+                }
+
+                query = query.in("place_id", regionIds);
             }
             if (priceFrom > 0) {
                 query = query.gte("price", priceFrom);
@@ -82,7 +107,7 @@ export default function IndexScreen(){
         return () => {
             isCurrentRequest = false;
         };
-    }, [title, priceFrom, priceTo, selectedSubCategoryId, selectedRegion]);
+    }, [title, priceFrom, priceTo, selectedCategory, selectedSubCategoryId, selectedRegion, subCategories, regionsMap.places]);
 
     return(
         <View>
@@ -93,7 +118,7 @@ export default function IndexScreen(){
                     <Text>{"Enter keywords"}</Text>
                 </View>                
                 <InputLine value={title} placeholder="Search" onChangeText={(text)=> setTitle(text)}/>
-                <OptionButton withIcon icon={require("../../assets/icons/categories.png")} title={selectedCategory ? categories.find((c) => c.id == selectedCategory).name + ", " + subCategories?.find((subCategory)=> subCategory.id == selectedSubCategoryId).name: "Any Category" } isNext onPress={() => router.push('/categories')} />
+                <OptionButton withIcon icon={require("../../assets/icons/categories.png")} title={selectedCategory ? `${categories.find((c) => c.id == selectedCategory)?.name}${selectedSubCategoryId ? `, ${subCategories?.find((subCategory) => subCategory.id == selectedSubCategoryId)?.name ?? ""}` : ""}` : "Any Category"} isNext onPress={() => router.push('/categories')} />
                 <OptionButton withIcon icon={require("../../assets/icons/location.png")} title={regionsMap.placeById.get(selectedRegion) ? regionsMap.placeById.get(selectedRegion).full_path : "Any Region"} isNext onPress={()=>{router.push("/regions")}}/>
                 <View style = {pageStyle.textWithIconContainer}>
                     <Image style={pageStyle.textIcon} source={require("../../assets/icons/price.png")}/>

@@ -56,7 +56,7 @@ export default function AddScreen(){
 
     useEffect(()=>{
         setIsEditMode(false);
-        setIsSearchMode(true);
+        setIsSearchMode(false);
     },[])
 
 

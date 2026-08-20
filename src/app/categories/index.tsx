@@ -23,7 +23,7 @@ const pageStyle = StyleSheet.create({
 
 export default function CategoriesScreen() {
     const router = useRouter();
-    const {categories} = useListingDescriptionContext();
+    const {categories, isSearchMode, setSelectedCategory} = useListingDescriptionContext();
     return (
         <View style={pageStyle.mainContainer}>
             <CommonHeader headerText="Categories" />
@@ -35,6 +35,16 @@ export default function CategoriesScreen() {
                         params: { category: category.id }
                     })} />
                 ))}
+                {isSearchMode &&
+                    <OptionButton
+                        title={"None"}
+                        isNext
+                        onPress={() => {
+                            setSelectedCategory(0)
+                            router.dismissTo('/search')
+                        }}
+                    />
+                }
                 
             </ScrollView>
         </View>

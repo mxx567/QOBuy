@@ -5,7 +5,7 @@ import OptionButton from "@/src/components/common/OptionButton";
 import RangeLine from "@/src/components/search/RangeLine";
 import { useListingDescriptionContext } from "@/src/hooks/ListingDescriptionContext";
 import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { View, StyleSheet, Image, Text } from "react-native";
 
 const pageStyle = StyleSheet.create({
@@ -38,14 +38,6 @@ export default function IndexScreen(){
     const [priceTo, setPriceTo] = useState(0);
 
     const { selectedSubCategoryId,setSelectedCategory, setSelectedSubCategoryId, setSelectedRegion , selectedCategory, categories, subCategories, regionsMap, selectedRegion, setIsEditMode, setIsSearchMode } = useListingDescriptionContext();
-
-    useEffect(()=>{
-        setIsEditMode(false);
-        setIsSearchMode(true);
-        setSelectedCategory(0);
-        setSelectedSubCategoryId(0);
-        setSelectedRegion(0);
-    },[])
 
     return(
         <View>
