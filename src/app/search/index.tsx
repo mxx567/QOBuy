@@ -4,6 +4,7 @@ import InputLine from "@/src/components/common/InputLine";
 import OptionButton from "@/src/components/common/OptionButton";
 import RangeLine from "@/src/components/search/RangeLine";
 import { useListingDescriptionContext } from "@/src/hooks/ListingDescriptionContext";
+import { supabase } from "@/utils/supabase";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { View, StyleSheet, Image, Text } from "react-native";
@@ -36,16 +37,52 @@ export default function IndexScreen(){
     const [title, setTitle] = useState('');
     const [priceFrom, setPriceFrom] = useState(0);
     const [priceTo, setPriceTo] = useState(0);
+    const [listingCount, setListingCount] = useState<number | null>(null);
 
     const { selectedSubCategoryId,setSelectedCategory, setSelectedSubCategoryId, setSelectedRegion , selectedCategory, categories, subCategories, regionsMap, selectedRegion, setIsEditMode, setIsSearchMode } = useListingDescriptionContext();
 
     useEffect(()=>{
         setIsEditMode(false);
         setIsSearchMode(true);
-        setSelectedCategory(0);
-        setSelectedSubCategoryId(0);
-        setSelectedRegion(0);
+        
     },[])
+
+    useEffect(() => {
+        let isCurrentRequest = true;
+
+        async function getListingCount() {
+            let query = supabase
+                .from("Listings")
+                .select("id", { count: "exact", head: true });
+
+            if (title.trim()) {
+                query = query.ilike("name", `%${title.trim()}%`);
+            }
+            if (selectedSubCategoryId) {
+                query = query.eq("category", selectedSubCategoryId);
+            }
+            if (selectedRegion) {
+                query = query.eq("place_id", selectedRegion);
+            }
+            if (priceFrom > 0) {
+                query = query.gte("price", priceFrom);
+            }
+            if (priceTo > 0) {
+                query = query.lte("price", priceTo);
+            }
+
+            const { count, error } = await query;
+            if (isCurrentRequest) {
+                setListingCount(error ? null : count ?? 0);
+            }
+        }
+
+        getListingCount();
+
+        return () => {
+            isCurrentRequest = false;
+        };
+    }, [title, priceFrom, priceTo, selectedSubCategoryId, selectedRegion]);
 
     return(
         <View>
@@ -63,7 +100,7 @@ export default function IndexScreen(){
                     <Text>{"Set Price Range"}</Text>
                 </View>     
                 <RangeLine value1={String(priceFrom)} value2={String(priceTo)} onChangeText1={(from) => setPriceFrom(Number(from))} onChangeText2={(to) => setPriceTo(Number(to))} />
-                <CommonButton title="Search" onPress={()=>{router.push('/search/searchresults')}} />
+                <CommonButton title={listingCount === null ? "Search" : `Search (${listingCount})`} onPress={()=>{router.push('/search/searchresults')}} />
             </View>
         </View>
         

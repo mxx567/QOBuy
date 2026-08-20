@@ -48,7 +48,7 @@ export default function AddScreen(){
     const [listing, setListing] = useState<any>();
     const [title, setTitle] = useState<string>('');
     const [description, setDescription] = useState<string>('');
-    const { selectedCategory,setSelectedCategory, selectedSubCategoryId,setSelectedSubCategoryId, selectedRegion, setSelectedRegion, categories, subCategories, regionsMap, setIsEditMode,isLoading } = useListingDescriptionContext();
+    const { selectedCategory, setIsSearchMode , setSelectedCategory, selectedSubCategoryId,setSelectedSubCategoryId, selectedRegion, setSelectedRegion, categories, subCategories, regionsMap, setIsEditMode,isLoading } = useListingDescriptionContext();
     const [price, setPrice] = useState<string>('');
     const [existingImg, setExistingImg] = useState<any[]>();
     
@@ -57,6 +57,7 @@ export default function AddScreen(){
 
     useEffect(()=>{
         setIsEditMode(true);
+        setIsSearchMode(false);
     },[])
     
     const params = useLocalSearchParams<{listingid: string}>();
