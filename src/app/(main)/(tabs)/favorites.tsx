@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase";
 import date2string from "@/utils/date2string";
 
-import { useNavigation } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 import { useListingDescriptionContext } from "@/src/hooks/ListingDescriptionContext";
 import { useAuthContext } from "@/src/hooks/AuthContext";
 import { useFavorites } from "@/src/hooks/useFavorites";
@@ -34,6 +34,7 @@ const pageStyle = StyleSheet.create({
 
 
 export default function FavoritesScreen(){
+    const router = useRouter();
     const [listings, setListings] = useState<any[]>([]);
 
     const {subCategories} = useListingDescriptionContext();
@@ -112,7 +113,7 @@ export default function FavoritesScreen(){
                 const isLiked = likedListingIds.includes(listing.id);
                 return(
                     <ListingCard 
-                        onPress={() => {}}
+                        onPress={() => {router.push({pathname: "/listings/[listing]", params: {listing: listing.id}})}}
                         name={listing.name.toString()}
                         image={listing.pictures.length == 0 ? undefined : JSON.parse(listing.pictures[0]).uri}
                         price={listing.price.toString()}
