@@ -19,8 +19,27 @@
   <img width="300px" src="https://i.ibb.co.com/vvhhcJpq/photo-5210959386904308210-w.jpg"  alt=""/>
   <img width="300px" src="https://i.ibb.co.com/svJjVsmg/photo-5210959386904308211-w.jpg"  alt=""/>
 </div>
-
-
+<h2 align="center">
+  Installation of the app
+</h2>
+<ul>
+  <li>Open "Releases" tab of this repository </li>
+  <li>Download the app by clicking on the .apk file that is in the latest release</li>
+  <li>Install the app by opening the downloaded file</li>
+</ul>
+<h2 align="center">
+  Installation of the project to your IDE
+</h2>
+<ul>
+  <li>Make sure that you have Node.js on your machine</li>
+  <li>Locate to the folder that you want to install the project files</li>
+  <li>Enter these commands to the terminal</li>
+</ul>
+<pre><code>
+  git clone https://github.com/mxx567/QOBuy
+  cd QOBuy
+  npm install
+</code></pre>
 
 
 
