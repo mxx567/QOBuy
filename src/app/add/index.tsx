@@ -16,16 +16,19 @@ import { ImagePickerSmall } from "@/src/components/img/imagePicker";
 import InputLine from "@/src/components/common/InputLine";
 import CommonButton from "@/src/components/common/CommonButton";
 import CommonHeader from "@/src/components/common/CommonHeader";
+import ConditionSelector from "@/src/components/common/ConditionSelector";
 
 const pageStyle = StyleSheet.create({
     mainPage:{
         flex: 1,        
     },
     screenContainer:{
+        flexGrow: 1,
         alignItems: "center",
         justifyContent: "center",
         gap: 10,
-        marginTop: 20
+        marginTop: 20,
+        paddingBottom: 30,
     },
     imgagesContainer:{
         flexDirection:'row',
@@ -50,6 +53,7 @@ export default function AddScreen(){
     const [description, setDescription] = useState<string>('');
     const { selectedCategory, selectedSubCategoryId, selectedRegion, setSelectedCategory, setSelectedRegion, setSelectedSubCategoryId, categories, subCategories, regionsMap,setIsEditMode, setIsSearchMode } = useListingDescriptionContext();
     const [price, setPrice] = useState<number>(0);
+    const [isUsed, setIsUsed] = useState(true);
 
     const [titlec, setTitleC] = useState(0);
     const [descc, setdescC] = useState(0);
@@ -80,6 +84,7 @@ export default function AddScreen(){
             category: selectedSubCategoryId,
             desc: description,
             price: price,
+            isUsed,
             pictures: uploadedLinks,
             place_id: selectedRegion,
             user_id: profile?.id
@@ -140,11 +145,10 @@ export default function AddScreen(){
 
     return (
         <View style={pageStyle.mainPage}>
-            <StatusBar />
             
             <CommonHeader headerText="Create Listing"/>
             
-            <ScrollView contentContainerStyle={pageStyle.screenContainer}>
+            <ScrollView style={{ flex: 1 }} contentContainerStyle={pageStyle.screenContainer}>
                 <ScrollView contentContainerStyle={pageStyle.imgagesContainer} horizontal>
                     {image && image.map((img) =>(
                         <Pressable key = {image.indexOf(img)} onPress={() => setImage([...image.slice(0, image.indexOf(img)), ...image.slice(image.indexOf(img) + 1)])}>
@@ -161,6 +165,7 @@ export default function AddScreen(){
                 <InputCounter title="Description should contain minimum of 64 symbols" currentSymbolC={descc} maxSymbolC={4096}/>
             
                 <InputLine placeholder="Price" value={price.toString()} onChangeText={(text) => setPrice(Number(text))} placeholderTextColor="#555" inputMode="numeric" />
+                <ConditionSelector value={isUsed} onChange={setIsUsed} />
                 
                 <OptionButton withIcon icon={require("../../assets/icons/location.png")} title={regionsMap.placeById.get(selectedRegion) ? regionsMap.placeById.get(selectedRegion).full_path : "Select a region"} isNext onPress={()=>{router.push("/regions")}}/>
                 <CommonButton title="Publish" isNext={false} onPress= {()=> {addListing();}}/>

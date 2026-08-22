@@ -16,16 +16,19 @@ import { ImagePickerSmall } from "@/src/components/img/imagePicker";
 import InputLine from "@/src/components/common/InputLine";
 import CommonButton from "@/src/components/common/CommonButton";
 import CommonHeader from "@/src/components/common/CommonHeader";
+import ConditionSelector from "@/src/components/common/ConditionSelector";
 
 const pageStyle = StyleSheet.create({
     mainPage:{
         flex: 1
     },
     screenContainer:{
+        flexGrow: 1,
         alignItems: "center",
         justifyContent: "center",
         gap: 10,
-        marginTop: 20
+        marginTop: 20,
+        paddingBottom: 30,
     },
     imgagesContainer:{
         flexDirection:'row',
@@ -50,6 +53,7 @@ export default function AddScreen(){
     const [description, setDescription] = useState<string>('');
     const { selectedCategory, setIsSearchMode , setSelectedCategory, selectedSubCategoryId,setSelectedSubCategoryId, selectedRegion, setSelectedRegion, categories, subCategories, regionsMap, setIsEditMode,isLoading } = useListingDescriptionContext();
     const [price, setPrice] = useState<string>('');
+    const [isUsed, setIsUsed] = useState(true);
     const [existingImg, setExistingImg] = useState<any[]>();
     
     const [titlec, setTitleC] = useState(0);
@@ -75,6 +79,7 @@ export default function AddScreen(){
                 category: selectedSubCategoryId,
                 desc: description,
                 price: price,
+                isUsed,
                 pictures: existingImg?.concat(...uploadedLinks),
                 place_id: selectedRegion
             }) // Data to modify
@@ -132,6 +137,7 @@ export default function AddScreen(){
                 setSelectedRegion(fetchedListing.place_id);
                 setSelectedSubCategoryId(fetchedListing.category);
                 setPrice(fetchedListing.price);
+                setIsUsed(fetchedListing.isUsed ?? true);
             }
         }
 
@@ -188,8 +194,7 @@ export default function AddScreen(){
             <StatusBar />
                 
             <CommonHeader headerText="Edit Listing"/>
-            <ScrollView>
-                <ScrollView contentContainerStyle={pageStyle.screenContainer}>
+            <ScrollView style={{ flex: 1 }} contentContainerStyle={pageStyle.screenContainer}>
                 <ScrollView contentContainerStyle={pageStyle.imgagesContainer} horizontal>
                     {existingImg && existingImg.map((img) =>(
                         <Pressable key={existingImg.indexOf(img)} onPress={() => {setExistingImg([...existingImg.slice(0, existingImg.indexOf(img)), ...existingImg.slice(existingImg.indexOf(img) + 1)])}}>
@@ -211,11 +216,11 @@ export default function AddScreen(){
                     <InputCounter title="Description should contain minimum of 64 symbols" currentSymbolC={descc} maxSymbolC={4096}/>
                     
                     <InputLine placeholder="Price" value={price} onChangeText={setPrice} placeholderTextColor="#555" inputMode="numeric" />
+                    <ConditionSelector value={isUsed} onChange={setIsUsed} />
                         
                     <OptionButton withIcon icon={require("../../assets/icons/location.png")} title={regionsMap.placeById.get(selectedRegion) ? regionsMap.placeById.get(selectedRegion).full_path : "Select a region"} isNext onPress={()=>{router.push("/regions")}}/>
                     <CommonButton title="Publish" isNext={false} onPress= {()=> updateListing()}/>
                     <CommonButton title="Remove" isNext={false} onPress= {()=> removeListing()}/>
-                </ScrollView>
             </ScrollView>
             
         </View>

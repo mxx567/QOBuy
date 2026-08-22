@@ -141,7 +141,7 @@ export default function IndexScreen(){
 
     return(
         <View style={pageStyle.page}>
-            <SearchBar onPress={() => router.dismissTo('/search')}/>
+            <SearchBar title={params.title?} onPress={() => router.dismissTo('/search')}/>
             <ScrollView style={pageStyle.resultsScroll} contentContainerStyle={pageStyle.mainPage}>
                 {isLoading && <ActivityIndicator size="large" color="#4E4AC9" />}
                 {!isLoading && listings.length === 0 && <Text style={pageStyle.statusText}>No listings found.</Text>}

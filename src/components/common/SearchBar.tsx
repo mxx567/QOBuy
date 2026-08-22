@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 
 
-export default function SearchBar({onPress} : {onPress() : void}){
+export default function SearchBar({onPress, title = ""} : {onPress() : void, title: string}){
     const insets = useSafeAreaInsets();
     const searchBarStyle = StyleSheet.create({
         container:{
@@ -40,7 +40,7 @@ export default function SearchBar({onPress} : {onPress() : void}){
     return(
         <View style={searchBarStyle.container}>
             <Pressable style={searchBarStyle.searchBar} onPress={onPress}>
-                <Text style={searchBarStyle.text}>{"Find a..."}</Text>
+                <Text style={searchBarStyle.text}>{title === "" ? "Find a..." : title}</Text>
                 <Image style={searchBarStyle.image} source={require("../../assets/icons/search.png")}/>
             </Pressable>
         </View>
