@@ -6,6 +6,7 @@ const errorTextStyle = StyleSheet.create({
         flexDirection:'row',
         gap:5,
         justifyContent: "center",
+        alignItems: 'center',
         width:340,
     },
     text:{

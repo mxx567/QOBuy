@@ -17,6 +17,8 @@ import InputLine from "@/src/components/common/InputLine";
 import CommonButton from "@/src/components/common/CommonButton";
 import CommonHeader from "@/src/components/common/CommonHeader";
 import ConditionSelector from "@/src/components/common/ConditionSelector";
+import CommonErrorText from "@/src/components/common/CommonErrorText";
+import { getListingFormErrors } from "@/src/utils/listingValidation";
 
 const pageStyle = StyleSheet.create({
     mainPage:{
@@ -54,6 +56,7 @@ export default function AddScreen(){
     const { selectedCategory, selectedSubCategoryId, selectedRegion, setSelectedCategory, setSelectedRegion, setSelectedSubCategoryId, categories, subCategories, regionsMap,setIsEditMode, setIsSearchMode } = useListingDescriptionContext();
     const [price, setPrice] = useState<number>(0);
     const [isUsed, setIsUsed] = useState(true);
+    const [formError, setFormError] = useState('');
 
     const [titlec, setTitleC] = useState(0);
     const [descc, setdescC] = useState(0);
@@ -76,6 +79,20 @@ export default function AddScreen(){
     }
     
     async function addListing() {
+        const errors = getListingFormErrors({
+            title,
+            description,
+            price,
+            selectedSubCategoryId,
+            selectedRegion,
+        });
+
+        if (errors.length > 0) {
+            setFormError(errors.join("\n"));
+            return;
+        }
+
+        setFormError('');
         
         const uploadPromises = image.map(singleImage => uploadToImgBB(singleImage.uri));
         const uploadedLinks = (await Promise.all(uploadPromises)).map(uploadedLink => JSON.stringify(uploadedLink));
@@ -168,6 +185,7 @@ export default function AddScreen(){
                 <ConditionSelector value={isUsed} onChange={setIsUsed} />
                 
                 <OptionButton withIcon icon={require("../../assets/icons/location.png")} title={regionsMap.placeById.get(selectedRegion) ? regionsMap.placeById.get(selectedRegion).full_path : "Select a region"} isNext onPress={()=>{router.push("/regions")}}/>
+                <CommonErrorText value={formError}/>
                 <CommonButton title="Publish" isNext={false} onPress= {()=> {addListing();}}/>
             </ScrollView>
         </View>

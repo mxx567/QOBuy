@@ -158,7 +158,7 @@ export default function IndexScreen(){
     }
     return (
         <View style={pageStyle.pageContainer}>
-            <SearchBar onPress={()=>{router.push('/search')}}/>
+            <SearchBar title="" onPress={()=>{router.push('/search')}}/>
             <FlatList
                 style={pageStyle.mainPage}
                 data={listings}
