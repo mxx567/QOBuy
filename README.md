@@ -34,11 +34,13 @@
   <li>Make sure that you have Node.js on your machine</li>
   <li>Locate to the folder that you want to install the project files</li>
   <li>Enter these commands to the terminal</li>
+  <li>Make sure that you defined your API keys for <a href="https://supabase.com/">Supabase</a> and <a href="https://ru.imgbb.com/">IMGBB</a> in the .env.local file</li>
 </ul>
 <pre><code>
   git clone https://github.com/mxx567/QOBuy
   cd QOBuy
   npm install
+  npx expo start //if you want to test the app with Expo GO
 </code></pre>
 
 
