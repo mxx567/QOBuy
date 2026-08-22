@@ -59,7 +59,7 @@ const pageStyle = StyleSheet.create({
 export default function IndexScreen(){
 
     const router = useRouter();
-    const params = useLocalSearchParams<{ title?: string; priceFrom?: string; priceTo?: string }>();
+    const params = useLocalSearchParams<{ title?: string; priceFrom?: string; priceTo?: string; priceSort?: string; condition?: string }>();
     const [listings, setListings] = useState<any[]>([]);
     const [page, setPage] = useState(0);
     const [totalCount, setTotalCount] = useState(0);
@@ -71,7 +71,7 @@ export default function IndexScreen(){
 
     useEffect(() => {
         setPage(0);
-    }, [params.title, params.priceFrom, params.priceTo, selectedCategory, selectedSubCategoryId, selectedRegion]);
+    }, [params.title, params.priceFrom, params.priceTo, params.priceSort, params.condition, selectedCategory, selectedSubCategoryId, selectedRegion]);
 
     useEffect(() => {
         let isCurrentRequest = true;
@@ -80,8 +80,7 @@ export default function IndexScreen(){
             setIsLoading(true);
             let query = supabase
                 .from("Listings")
-                .select("*", { count: "exact" })
-                .order("created_at", { ascending: false });
+                .select("*", { count: "exact" });
 
             const keyword = typeof params.title === "string" ? params.title.trim() : "";
             if (keyword) {
@@ -115,6 +114,15 @@ export default function IndexScreen(){
             const priceTo = Number(params.priceTo ?? 0);
             if (priceFrom > 0) query = query.gte("price", priceFrom);
             if (priceTo > 0) query = query.lte("price", priceTo);
+            if (params.priceSort === "free") query = query.eq("price", 0);
+            if (params.condition === "used" || params.condition === "new") {
+                query = query.eq("isUsed", params.condition === "used");
+            }
+            if (params.priceSort === "cheapest") query = query.order("price", { ascending: true });
+            if (params.priceSort === "expensive") query = query.order("price", { ascending: false });
+            if (params.priceSort !== "cheapest" && params.priceSort !== "expensive") {
+                query = query.order("created_at", { ascending: false });
+            }
 
             const from = page * pageSize;
             const { data, count, error } = await query.range(from, from + pageSize - 1);
@@ -127,7 +135,7 @@ export default function IndexScreen(){
 
         getListings();
         return () => { isCurrentRequest = false; };
-    }, [page, params.title, params.priceFrom, params.priceTo, selectedCategory, selectedSubCategoryId, selectedRegion, subCategories, regionsMap.places]);
+    }, [page, params.title, params.priceFrom, params.priceTo, params.priceSort, params.condition, selectedCategory, selectedSubCategoryId, selectedRegion, subCategories, regionsMap.places]);
 
     const totalPages = Math.ceil(totalCount / pageSize);
 
@@ -143,6 +151,7 @@ export default function IndexScreen(){
                         name={listing.name}
                         image={listing.pictures?.length ? JSON.parse(listing.pictures[0]).uri : undefined}
                         price={String(listing.price)}
+                        isUsed={listing.isUsed}
                         isLiked={likedListingIds.includes(listing.id)}
                         category={subCategories.find((subCategory) => subCategory.id == listing.category)?.name}
                         publishDate={date2string(listing.created_at)}

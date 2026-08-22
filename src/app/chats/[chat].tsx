@@ -334,7 +334,6 @@ export default function ChatScreen(){
 
     return(
         <View style ={pageStyle.mainContainer}>
-            <StatusBar />
             <ChatHeader listingname={listingName} userNames={(chatParticipants?.map((cp) => {return(cp.user_id != userId ? cp.username  : "You")}).join(", ")) ?? ''}/>
             <ScrollView 
                 ref={scrollViewRef}

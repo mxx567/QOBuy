@@ -7,13 +7,17 @@ import { useListingDescriptionContext } from "@/src/hooks/ListingDescriptionCont
 import { supabase } from "@/utils/supabase";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { View, StyleSheet, Image, Text } from "react-native";
+import { View, StyleSheet, Image, Text, Pressable, ScrollView } from "react-native";
+
+type PriceSort = "cheapest" | "expensive" | "free";
+type Condition = "used" | "new";
 
 const pageStyle = StyleSheet.create({
     mainPage:{
-        flex:1,
+        flexGrow: 1,
         alignItems: 'center',
-        padding: 10
+        padding: 10,
+        paddingBottom: 30,
     },
     textWithIconContainer:{
         marginTop: 5,
@@ -27,6 +31,46 @@ const pageStyle = StyleSheet.create({
         width:20,
         height:20
     },
+    selectorSection: {
+        width: '100%',
+        marginTop: 18,
+    },
+    selectorHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: 10,
+    },
+    selectorRow: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 10,
+        width: '100%',
+    },
+    selector: {
+        backgroundColor: '#E0E0E0',
+        borderRadius: 16,
+        alignItems: 'center',
+        justifyContent: 'center',
+        alignSelf: 'flex-start',
+        paddingHorizontal: 24,
+        paddingVertical: 10,
+        flexGrow: 0,
+        flexShrink: 0,
+    },
+    selectedSelector: {
+        backgroundColor: '#4E4AC9',
+    },
+    selectorText: {
+        color: 'black',
+        textAlign: 'center',
+    },
+    selectedSelectorText: {
+        color: 'white',
+    },
+    searchButton:{
+        marginTop: 20
+    }
     
 })
 
@@ -37,6 +81,8 @@ export default function IndexScreen(){
     const [title, setTitle] = useState('');
     const [priceFrom, setPriceFrom] = useState(0);
     const [priceTo, setPriceTo] = useState(0);
+    const [priceSort, setPriceSort] = useState<PriceSort>("cheapest");
+    const [condition, setCondition] = useState<Condition | null>(null);
     const [listingCount, setListingCount] = useState<number | null>(null);
 
     const { selectedSubCategoryId,setSelectedCategory, setSelectedSubCategoryId, setSelectedRegion , selectedCategory, categories, subCategories, regionsMap, selectedRegion, setIsEditMode, setIsSearchMode } = useListingDescriptionContext();
@@ -98,6 +144,12 @@ export default function IndexScreen(){
             if (priceTo > 0) {
                 query = query.lte("price", priceTo);
             }
+            if (priceSort === "free") {
+                query = query.eq("price", 0);
+            }
+            if (condition) {
+                query = query.eq("isUsed", condition === "used");
+            }
 
             const { count, error } = await query;
             if (isCurrentRequest) {
@@ -110,12 +162,12 @@ export default function IndexScreen(){
         return () => {
             isCurrentRequest = false;
         };
-    }, [title, priceFrom, priceTo, selectedCategory, selectedSubCategoryId, selectedRegion, subCategories, regionsMap.places]);
+    }, [title, priceFrom, priceTo, priceSort, condition, selectedCategory, selectedSubCategoryId, selectedRegion, subCategories, regionsMap.places]);
 
     return(
-        <View>
+        <View style={{ flex: 1 }}>
             <CommonHeader headerText="Search Parameters"/>
-            <View style={pageStyle.mainPage}>
+            <ScrollView contentContainerStyle={pageStyle.mainPage}>
                 <View style = {pageStyle.textWithIconContainer}>
                     <Image style={pageStyle.textIcon} source={require("../../assets/icons/titlename.png")}/>
                     <Text>{"Enter keywords"}</Text>
@@ -128,8 +180,34 @@ export default function IndexScreen(){
                     <Text>{"Set Price Range"}</Text>
                 </View>     
                 <RangeLine value1={String(priceFrom)} value2={String(priceTo)} onChangeText1={(from) => setPriceFrom(Number(from))} onChangeText2={(to) => setPriceTo(Number(to))} />
-                <CommonButton title={listingCount === null ? "Search" : `Search (${listingCount})`} onPress={()=>{router.push({ pathname: '/search/searchresults', params: { title, priceFrom: String(priceFrom), priceTo: String(priceTo) } })}} />
-            </View>
+                <View style={pageStyle.selectorSection}>
+                    <View style={pageStyle.selectorHeader}>
+                        <Text>{"Sort by price"}</Text>
+                    </View>
+                    <View style={pageStyle.selectorRow}>
+                        {([['cheapest', 'Cheapest'], ['expensive', 'Most Expensive'], ['free', 'Free']] as const).map(([value, label]) => (
+                            <Pressable key={value} style={[pageStyle.selector, priceSort === value && pageStyle.selectedSelector]} onPress={() => setPriceSort(value)}>
+                                <Text style={[pageStyle.selectorText, priceSort === value && pageStyle.selectedSelectorText]}>{label}</Text>
+                            </Pressable>
+                        ))}
+                    </View>
+                </View>
+                <View style={pageStyle.selectorSection}>
+                    <View style={pageStyle.selectorHeader}>
+                        <Text>{"Condition"}</Text>
+                    </View>
+                    <View style={pageStyle.selectorRow}>
+                        {([['used', 'Used'], ['new', 'New']] as const).map(([value, label]) => (
+                            <Pressable key={value} style={[pageStyle.selector, condition === value && pageStyle.selectedSelector]} onPress={() => setCondition(condition === value ? null : value)}>
+                                <Text style={[pageStyle.selectorText, condition === value && pageStyle.selectedSelectorText]}>{label}</Text>
+                            </Pressable>
+                        ))}
+                    </View>
+                </View>
+                <View style={pageStyle.searchButton}>
+                    <CommonButton title={listingCount === null ? "Search" : `Search (${listingCount})`} onPress={()=>{router.push({ pathname: '/search/searchresults', params: { title, priceFrom: String(priceFrom), priceTo: String(priceTo), priceSort, condition: condition ?? "" } })}} />
+                </View>
+            </ScrollView>
         </View>
         
         

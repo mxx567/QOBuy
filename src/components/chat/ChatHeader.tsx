@@ -1,44 +1,53 @@
 import { Pressable, View, Image, Text, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
-const headerStyle = StyleSheet.create({
-    header: {
-        height: 60,
-        width: '100%',
-        flexDirection: "row",
-        alignItems: "center",
-        padding: 10,
-        gap:10,
-        boxShadow: [{
-            offsetX: 0,
-            offsetY: -12,
-            blurRadius:20
-        }]
-    },
-    charInfo:{
-        flexDirection: 'column'
-    },
-    chatAvatar:{
-        width: 40,
-        height: 40,
-        borderRadius: 100
-    },
-    backIcon: {
-        width: 24,
-        height: 24,
-    },
-    headerText: {
-        color: 'black',
-        fontSize: 18,
-        fontWeight: "bold",
-    },
-    descText: {
-        color: '#4b4b4b',
-        fontSize: 14,
-        fontWeight: "bold",
-    }
-});
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 
 export default function ChatHeader({listingname, userNames, chaticon}: {listingname: string, userNames: string, chaticon?: string}){
+    const insets = useSafeAreaInsets();
+    const headerStyle = StyleSheet.create({
+        header: {
+            height: 60 + insets.top, 
+            width: '100%',
+            flexDirection: "row",
+            alignItems: "center",
+            padding: 10,
+            gap:10,
+            boxShadow: [{
+                offsetX: 0,
+                offsetY: -12,
+                blurRadius:20
+            }]
+        },
+        charInfo:{
+            flexDirection: 'column'
+        },
+        chatAvatar:{
+            width: 40,
+            height: 40,
+            borderRadius: 100,
+            marginTop: insets.top
+        },
+        backIcon: {
+            width: 24,
+            height: 24,
+            marginTop: insets.top
+        },
+        headerText: {
+            color: 'black',
+            fontSize: 18,
+            fontWeight: "bold",
+            marginTop: insets.top
+        },
+        descText: {
+            color: '#4b4b4b',
+            fontSize: 14,
+            fontWeight: "bold",
+        }
+    });
+
+
+
     if(chaticon === undefined){
         chaticon = 'https://i.ibb.co.com/9mGCjPYY/notfound.png';
     }

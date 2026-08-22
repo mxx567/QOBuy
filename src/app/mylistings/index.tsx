@@ -61,7 +61,6 @@ export default function MyListingScreen(){
 
     return (
         <View style={pageStyle.myListingsPage}>
-            <StatusBar />
             <CommonHeader headerText="My Listings"/>
             <FlatList
                 style={pageStyle.scrollContainer}

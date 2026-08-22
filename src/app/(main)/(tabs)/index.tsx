@@ -103,7 +103,7 @@ export default function IndexScreen(){
     const getListings = async () => {
         const { data, error } = await supabase
             .from("Listings")
-            .select("id, name, pictures, price, category, created_at")
+            .select("id, name, pictures, price, category, created_at, isUsed")
             .order("created_at", { ascending: false })
             .limit(30);
         if (error) {
@@ -173,6 +173,7 @@ export default function IndexScreen(){
                         <ListingCard 
                             onPress={() => {router.push({pathname: "/listings/[listing]", params: {listing: listing.id}})}}
                             key={listing.id} 
+                            isUsed={listing.isUsed}
                             name={listing.name.toString()}
                             image={listing.pictures.length == 0 ? undefined : JSON.parse(listing.pictures[0]).uri}
                             price={listing.price.toString()}

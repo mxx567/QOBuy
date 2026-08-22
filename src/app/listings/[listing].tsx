@@ -226,8 +226,6 @@ export default function ListingScreen(){
    
     return(
         <View style= {pageStyle.mainPage}>
-            
-            <StatusBar/>
             <CommonHeader headerText="Listing"/>
             {listing && 
                 

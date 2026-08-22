@@ -59,7 +59,7 @@ export default function FavoritesScreen(){
         setIsListingsLoading(true);
         const { data, error } = await supabase
             .from("Listings")
-            .select("id, name, pictures, price, category, created_at")
+            .select("id, name, pictures, price, category, created_at, isUsed")
             .in("id", listingIds);
         if (error) {
             console.error("Error fetching listings:", error.message);
@@ -117,6 +117,7 @@ export default function FavoritesScreen(){
                         name={listing.name.toString()}
                         image={listing.pictures.length == 0 ? undefined : JSON.parse(listing.pictures[0]).uri}
                         price={listing.price.toString()}
+                        isUsed={listing.isUsed}
                         isLiked={isLiked}
                         category={subCategories.find((subc) => subc.id == listing.category)?.name}
                         onLikePress={(nextIsLiked)=>  toggleFavorite(listing.id, nextIsLiked)}

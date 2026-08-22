@@ -8,6 +8,7 @@ interface ListingProps {
     isLiked?: boolean,
     category?: string,
     publishDate?: string,
+    isUsed: boolean,
     price?: string,
     onPress(): void,
     onLikePress(nextValue : boolean): void
@@ -53,12 +54,26 @@ const ListingStyle = StyleSheet.create({
     },
     catdate:{
         minWidth:120,
+    },
+    isUsed:{
+        height:24,
+        borderRadius: 10,
+        backgroundColor: "#E0E0E0",
+        width: 'auto',
+        minWidth: 30,
+        maxWidth: 60,
+        justifyContent: 'center',
+        alignItems: 'center'
+
+    },
+    isUsedText:{
+        color: 'black'
     }
 });
+2
 
 
-
-const ListingCard = ({image, name ='UNKNOWN' ,isLiked = false , category = 'Unknown',publishDate = 'Jan 01, 1970 at 10:00', price = 'Null', onPress, onLikePress} : ListingProps) => {
+const ListingCard = ({image, name ='UNKNOWN' ,isLiked = false , category = 'Unknown',publishDate = 'Jan 01, 1970 at 10:00', price = 'Null', isUsed = true, onPress, onLikePress} : ListingProps) => {
     if(image === undefined){
         image = 'https://i.ibb.co.com/9mGCjPYY/notfound.png';
     }
@@ -76,6 +91,9 @@ const ListingCard = ({image, name ='UNKNOWN' ,isLiked = false , category = 'Unkn
                 <Text style = {ListingStyle.price}>{price + " KZT"}</Text>
                 <View style = {ListingStyle.bottomContainer}>
                     <View style ={ListingStyle.catdate}>
+                        <View style={ListingStyle.isUsed}>
+                            <Text style={ListingStyle.isUsedText}>{isUsed? "Used" : "New"}</Text>
+                        </View>
                         <Text style = {ListingStyle.smallText}>{category}</Text>
                         <Text style = {ListingStyle.smallText}>{publishDate}</Text>
                     </View>

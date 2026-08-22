@@ -49,9 +49,7 @@ export default function ProfileScreen(){
             <View style = {pageStyle.buttons}>
                 <OptionButton withIcon icon={require("../../../assets/icons/categories.png")} title="My Listings" onPress={()=>{router.push("/mylistings")}} isNext/>
                 <OptionButton withIcon icon={require("../../../assets/icons/options.png")} title="Options" onPress={()=>{}} isNext/>
-            </View>
-            
-            
+            </View>    
             <CommonButton title="Sign Out" onPress={()=>{onSignOutButtonPress()}}/>
         </View>
     );
